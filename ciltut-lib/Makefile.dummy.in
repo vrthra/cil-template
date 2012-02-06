@@ -1,0 +1,34 @@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+libdir = @libdir@
+pkglibdir = $(libdir)/ciltut
+
+all: Makefile
+	make -f Makefile
+
+Makefile: CMakeLists.txt src/CMakeLists.txt
+	cmake .
+
+clean:
+	make clean
+	rm -f *~
+	rm -rf `find . -name Makefile`
+	rm -rf `find . -name CMakeFiles`
+	rm -rf `find . -name CMakeCache.txt`
+	rm -rf `find . -name cmake_install.cmake`
+
+distclean: clean
+
+INSTALL = /usr/bin/install -c
+INSTALL_DATA = ${INSTALL} -m 644
+INSTALL_PROGRAM = ${INSTALL}
+
+INSTALL_LIBS = src/libciltut.a src/libciltut.so
+
+install: $(INSTALL_FILES)
+	$(INSTALL_DATA) $(INSTALL_LIBS) $(DESTDIR)$(pkglibdir)/lib
+        
+Makefile.dummy: ../config.status Makefile.dummy.in
+	@echo "Rebuilding the Makefile"
+	(cd ..;./config.status)
+

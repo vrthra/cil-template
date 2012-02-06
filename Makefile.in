@@ -1,0 +1,176 @@
+# Makefile for a Cil tutorial, based on the Deputy Makefiles.
+# Zach Anderson (zachary.anderson@inf.ethz.ch)
+#
+#
+# Please edit Makefile.in, not Makefile!
+
+ifndef ARCHOS
+  ARCHOS = @ARCHOS@
+endif
+
+ifndef BUILD_DOCS
+  BUILD_DOCS = @BUILD_DOCS@
+endif
+
+ifndef BUILD_TUT11
+  BUILD_TUT11 = @BUILD_TUT11@
+endif
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+libdir = @libdir@
+pkglibdir = $(libdir)/ciltut
+
+SUBDIRS = ciltut-lib
+
+# It is important to build without NATIVECAML first,to generate the 
+# proper dependencies
+all:
+	$(MAKE) ciltut $(SUBDIRS)
+ifndef BYTECODE
+	$(MAKE) ciltut $(SUBDIRS) NATIVECAML=1
+# For some strange reason the bytecode cil library is remade, which triggers
+# a remake of the ciltut.byte.exe, but not the .asm.exe. This means that 
+# we keep using the bytecode version of ciltut. We force the .asm version to 
+# be the most recent one
+	touch obj/$(ARCHOS)/ciltut.asm.exe
+endif
+
+# Look out for outdated Makefile; if it's out of date, this will automatically
+# re-run ./config.status, then re-exec make with the same arguments.
+Makefile: config.status Makefile.in
+	@echo "Rebuilding the Makefile"
+	./$<
+
+config.status: configure
+	./$@ --recheck
+
+configure: configure.ac
+	autoconf
+
+
+#
+# Ciltut executable
+#
+
+OBJDIR       = obj/$(ARCHOS)
+DEPENDDIR    = obj/.depend
+
+SOURCEDIRS   = src
+
+# Add additional modules here. Order matters. If module x depends on module y,
+# then x has to come after y in the list.
+MODULES = tututil ciltutoptions \
+          tut0 tut1 tut2 tut3 tut4 tut5 tut6 tut7 tut8 tut9 tut10 tut11 main
+
+OCAMLFIND = @OCAMLFIND@
+CILINC = $(shell $(OCAMLFIND) query cil)
+
+COMPILEFLAGS = -w x -I $(CILINC)
+LINKFLAGS    = -I $(CILINC)
+
+ifeq ($(BUILD_TUT11),true)
+  COMPILEFLAGS += -I +ocamlgraph -I +why3
+  LINKFLAGS += -I +ocamlgraph -I +why3
+  PREPROC_ARG = -DBUILD_TUT11
+endif
+PREPROC = camlp4o pa_macro.cmo $(PREPROC_ARG)
+
+include Makefile.ocaml
+
+PROJECT_EXECUTABLE = $(OBJDIR)/ciltut$(EXE)
+PROJECT_MODULES    = $(MODULES)
+
+PROJECT_CMODULES =
+EXT_PROJ_CMODS =
+
+PROJECT_LIBS       = unix str nums
+
+ifeq ($(BUILD_TUT11), true)
+  PROJECT_LIBS += dynlink graph why3
+endif
+PROJECT_LIBS += cil
+
+# find the cil library
+vpath %.$(CMXA) $(CILINC)
+
+# Make sure that the ciltut files depend on the CIL library
+# Choose just one file on which everybody depends
+$(OBJDIR)/main.$(CMO): $(CILINC)/cil.$(CMXA)
+
+$(PROJECT_EXECUTABLE) : $(PROJECT_MODULES:%=$(OBJDIR)/%.$(CMO)) \
+                        $(PROJECT_CMODULES:%=$(OBJDIR)/%.$(CMC)) \
+                        cil.$(CMXA)
+	@$(NARRATIVE) "Linking $(COMPILETOWHAT) $@ $(LINKMSG)"
+	$(AT)$(CAMLLINK)  -o $@ \
+                    $(PROJECT_LIBS:%=%.$(CMXA)) \
+                    $(EXT_PROJ_MODS:%=%.$(CMO)) \
+                    $(PROJECT_MODULES:%=$(OBJDIR)/%.$(CMO)) \
+                    $(EXT_PROJ_CMODS:%=%.$(OBJ)) \
+                    $(PROJECT_CMODULES:%=$(OBJDIR)/%.$(CMC)) \
+                    $(ENDLINKFLAGS)
+
+ciltut: $(PROJECT_EXECUTABLE) 
+
+#
+# Subdirectories
+#
+
+.PHONY: $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@ -f Makefile.dummy
+
+#
+# Testing and cleanup
+#
+
+clean:
+	rm -f $(OBJDIR)/*.* $(DEPENDDIR)/*.*
+	for i in $(SUBDIRS); do make -C $$i -f Makefile.dummy clean; done
+
+libclean:
+	for i in ciltut-lib; do make -C $$i -f Makefile.dummy clean; done
+
+distclean: cleancaml clean
+	rm -f config.status config.log Makefile
+	for i in $(SUBDIRS); do make -C $$i -f Makefile.dummy distclean; done
+
+#
+# Installation
+#
+
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+
+BIN_FILES = bin/ciltutcc \
+            $(OBJDIR)/ciltut.byte.exe \
+            $(OBJDIR)/ciltut.asm.exe
+
+LIB_FILES = lib/Ciltut.pm
+
+INCLUDE_FILES = ciltut-include/ciltut.h
+
+ALL_FILES = $(BIN_FILES) $(LIB_FILES) $(INCLUDE_FILES)
+
+install-base: $(ALL_FILES)
+	$(INSTALL) -d $(DESTDIR)$(prefix)/bin
+	$(INSTALL) -d $(DESTDIR)$(pkglibdir)
+	$(INSTALL) -d $(DESTDIR)$(pkglibdir)/bin
+	$(INSTALL) -d $(DESTDIR)$(pkglibdir)/lib
+	$(INSTALL) -d $(DESTDIR)$(pkglibdir)/include
+	$(INSTALL_PROGRAM) $(BIN_FILES) $(DESTDIR)$(pkglibdir)/bin
+	touch $(DESTDIR)$(pkglibdir)/bin/ciltut.asm.exe
+	$(INSTALL_DATA) $(LIB_FILES) $(DESTDIR)$(pkglibdir)/lib
+	$(INSTALL_DATA) $(INCLUDE_FILES) $(DESTDIR)$(pkglibdir)/include
+	rm -f $(DESTDIR)$(prefix)/bin/ciltutcc
+	ln -s ../lib/ciltut/bin/ciltutcc $(DESTDIR)$(prefix)/bin/ciltutcc
+	for i in $(SUBDIRS); do \
+	  make -C $$i -f Makefile.dummy install; \
+	done
+
+# And now for normal users who want everything installed...
+
+install: install-base
+

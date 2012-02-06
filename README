@@ -1,0 +1,110 @@
+This is a simple tutorial about how to use the CIL compiler frontend to do
+static and dynamic program analysis.
+
+Author: Zach Anderson (zachary.anderson@inf.ethz.ch)
+
+Intro:
+------
+
+CIL is a frontend for C compilers. It takes C code as input, which can then be
+analyzed or instrumented, and then spits out C code, which can be passed to
+your favorite C compiler. This process can be automated such that your CIL-based
+frontend can be made to look like gcc, or whatever, and used directly in your
+build process. This tutorial creates such a frontend, and demonstrates, in
+tutorial form, some nifty things that might be done with it.
+
+Building and Installing:
+------------------------
+
+There are a few dependencies:
+. Everything you need to build C programs
+. OCaml
+. cmake
+  - Ubuntu packages: cmake cmake-data
+. Please let me know if I've forgotten anything
+
+Dependencies only for the theorem proving example (tut11.ml):
+. why3
+. theorem provers (e.g. alt-ergo)
+. pass --disable-tut11 to the configure script to disable tut11
+
+After untarring the archive, enter the directory and do the following:
+
+$ ./configure
+$ make
+$ sudo make install
+
+Then, enter the /test directory and build the program like so:
+
+$ ciltutcc -o test1 test1.c
+$ ./test1
+
+The generated ciltutcc takes all of the usual gcc arguments, in addition to the
+following:
+
+--trace       - shows all of the commands run
+--save-temps  - saves all of the intermediate files
+--enable-tutN - enables the pass defined by tutN.ml
+
+And others that you can define in src/ciltutoptions.ml
+
+If you do:
+
+$ ciltutcc --save-temps -o test1 test1.c
+
+A file called test1.cil.c will be created showing the source file created by
+the frontend before it is passed on to gcc.
+
+Documentation
+-------------
+
+Dependencies for the documentation:
+. LaTeX
+. ocamlweb
+  - Ubuntu package: ocamlweb
+. highlight
+	- Ubuntu packages: highlight highlight-common
+	- Version 2.16 can be obtained for Mac OSX at:
+	  http://www.hmug.org/pub/MacOS_X/BSD/Applications/Text/highlight
+. Again, please let me know if I've forgotten anything
+
+Assuming you have installed these, doing:
+
+$ make
+
+will build ciltut.pdf along with everything else.
+
+Pass --disable-docs to the configure script to disable document building.
+
+Files:
+------
+
+Makefile.in - Edit the "MODULES =" line to add additional ocaml modules. Other
+parts of the Makefile can probably remain unchanged unless you need to do
+something weird.
+
+src/main.ml - Reads in a source file, calls into the various tutorial modules,
+spits out the result. Hopefully it is obvious where to add code to call into
+any new modules that you write.
+
+src/ciltutoptions.ml - Defines command line options.
+
+src/tut*.ml - Tutorial modules explaining how to use CIL.
+
+ciltut-include/ciltut.h - Various function and macro definitions needed for
+building ciltut-lib and the things in test/.
+
+ciltut-lib/ - The runtime library, build with CMake. The files in src/tut*.c
+go along with the corresponding .ml files. ciltut_libc.c has utility functions.
+
+lib/Ciltut.pm - A perl script that sits in front of the actual compiler
+frontend. It is used for massaging the command line a bit. For example, it makes
+sure that the final result links against the code in ciltut-lib/.
+
+test/tut*.c - Test programs for the various tutorial modules.
+
+cil/ - The cil library. All the important definitions are in cil/src/cil.mli.
+It is also a git repository linked-up with the official sourceforge
+repository.
+
+
