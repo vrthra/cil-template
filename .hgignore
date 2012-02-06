@@ -43,3 +43,5 @@ ciltut-lib/src/CMakeFiles/*
 ciltut-lib/src/Makefile
 ciltut-lib/src/cmake_install.cmake
 
+tools/delcamlcomms
+

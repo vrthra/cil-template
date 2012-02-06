@@ -21,6 +21,8 @@ There are a few dependencies:
 . OCaml
 . cmake
   - Ubuntu packages: cmake cmake-data
+. CIL
+  - Build and install from http://cil.sf.net
 . Please let me know if I've forgotten anything
 
 Dependencies only for the theorem proving example (tut11.ml):
@@ -57,6 +59,10 @@ the frontend before it is passed on to gcc.
 
 Documentation
 -------------
+(This is to remind me how to build the docs in my private repo, and so they
+don't apply to the code under this tree. The documentation of which this section
+speaks will shortly be available at http://www.inf.ethz.ch/~azachary.)
+
 
 Dependencies for the documentation:
 . LaTeX
@@ -72,7 +78,7 @@ Assuming you have installed these, doing:
 
 $ make
 
-will build ciltut.pdf along with everything else.
+will build docs/ciltut.pdf along with everything else.
 
 Pass --disable-docs to the configure script to disable document building.
 
@@ -102,9 +108,5 @@ frontend. It is used for massaging the command line a bit. For example, it makes
 sure that the final result links against the code in ciltut-lib/.
 
 test/tut*.c - Test programs for the various tutorial modules.
-
-cil/ - The cil library. All the important definitions are in cil/src/cil.mli.
-It is also a git repository linked-up with the official sourceforge
-repository.
 
 
