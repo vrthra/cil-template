@@ -348,6 +348,11 @@ class colorCheckVisitor (c : ctxt) = object(self)
 
 end
 
+let checkColorTypes (c : ctxt) (fd : fundec) (loc : location) : unit =
+  let c = context_for_locals c fd in
+  let vis = new colorCheckVisitor c in
+  ignore(visitCilFunction vis fd)
+
 
 class colorEraserVisitor = object(self)
   inherit nopCilVisitor
@@ -359,14 +364,10 @@ class colorEraserVisitor = object(self)
 
 end
 
-let checkColorTypes (c : ctxt) (fd : fundec) (loc : location) : unit =
-  let c = context_for_locals c fd in
-  let vis = new colorCheckVisitor c in
-  ignore(visitCilFunction vis fd)
-
 let eraseColors (f : file) : unit =
   let vis = new colorEraserVisitor in
   visitCilFile vis f
+
 
 let tut8_init (f : file) : unit =
   initColorFunctions f

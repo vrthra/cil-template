@@ -99,5 +99,3 @@ let tut10 (f : file) : unit =
   visitCilFile vis f
 
 
-
-

@@ -109,7 +109,7 @@ class colorCheckVisitor = object(self)
 
   method vexpr (e : exp) =
     match e with
-    | CastE(t, e) ->
+    | CastE(t, e) when not(isConstant e) ->
       let tcres = colorTypesCompat t (typeOf e) in
       warning_for_tcres tcres;
       DoChildren
@@ -121,9 +121,25 @@ let checkColorTypes (fd : fundec) (loc : location) : unit =
   ignore(visitCilFunction vis fd)
 
 
+class colorEraserVisitor = object(self)
+  inherit nopCilVisitor
+
+  method vattr (a : attribute) =
+    match a with
+    | Attr(s,_) when L.mem s color_strings -> ChangeTo []
+    | _ -> DoChildren
+
+end
+
+let eraseColors (f : file) : unit =
+  let vis = new colorEraserVisitor in
+  visitCilFile vis f
+
+
 
 let tut7 (f : file) : unit =
-  iterGlobals f (onlyFunctions checkColorTypes)
+  iterGlobals f (onlyFunctions checkColorTypes);
+	eraseColors f
 
 
 

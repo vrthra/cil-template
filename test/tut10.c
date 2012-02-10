@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <ciltut.h>
 
-#define DATA_SIZE 500000000
+#define DATA_SIZE 50000000
 #define TIMES 5
 
 struct array {

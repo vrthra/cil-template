@@ -113,6 +113,7 @@ let initWhyCtxt (p : string) : wctxt =
 let invariantAttrStr = "invariant"
 let postAttrStr      = "post"
 let preAttrStr       = "pre"
+let tut11_attrs = [invariantAttrStr; postAttrStr; preAttrStr;]
 
 
 
@@ -420,10 +421,27 @@ let processFunction (wc : wctxt) (fd : fundec) (loc : location) : unit =
     validateWhyCtxt wc vc
 
 
+class attrEraserVisitor = object(self)
+  inherit nopCilVisitor
+
+  method vattr (a : attribute) =
+    match a with
+    | Attr(s,_) when L.mem s tut11_attrs -> ChangeTo []
+    | _ -> DoChildren
+
+end
+
+let eraseAttrs (f : file) : unit =
+  let vis = new attrEraserVisitor in
+  visitCilFile vis f
+
+
+
 
 let tut11 (f : file) : unit =
   let wc = initWhyCtxt (!Ciltutoptions.prover) in
-  iterGlobals f (onlyFunctions (processFunction wc))
+  iterGlobals f (onlyFunctions (processFunction wc));
+	eraseAttrs f
 
 
 ELSE

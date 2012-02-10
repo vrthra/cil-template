@@ -14,7 +14,7 @@ set(SHELTER_SRCS ciltut_libc.c tut4.c tut8.c tut6.c tut10.c)
 
 add_library(ciltut-static ${SHELTER_SRCS})
 set_target_properties(ciltut-static PROPERTIES
-  COMPILE_FLAGS -O2
+  COMPILE_FLAGS "-O2 -ggdb"
 )
 set_target_properties(ciltut-static
   PROPERTIES OUTPUT_NAME ciltut
@@ -22,7 +22,7 @@ set_target_properties(ciltut-static
 
 add_library(ciltut-shared SHARED ${SHELTER_SRCS})
 set_target_properties(ciltut-shared PROPERTIES
-  COMPILE_FLAGS -O2
+  COMPILE_FLAGS "-O2 -ggdb"
 )
 set_target_properties(ciltut-shared
   PROPERTIES OUTPUT_NAME ciltut

@@ -1,14 +1,18 @@
-#include <stdio.h>
+
+
+
+
+
+
 #include <ciltut.h>
 
 struct bar {
   int red * red r;
   int green g;
-  int blue b;
   int red green blue c;
 };
 
-void foo(int blue c, int r, int g, int b)
+void foo(int blue c, int r, int g)
 {
   return;
 }
@@ -20,10 +24,10 @@ int main()
 
   B.r = &r;
   B.g = 50;
-  B.b = 50;
   B.c = AddColor(blue, 50);
 
-  foo(B.c, *B.r, B.g, B.b);
+  foo(B.c, *B.r, B.g);
+  foo(B.g, r, r);
 
   return 0;
 }

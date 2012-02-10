@@ -59,12 +59,18 @@ struct cache_stack {
 
 
 pthread_key_t CS_key;
-CONSTRUCTOR static void init_CS_key()
+static void init_CS()
 {
   struct cache_stack *CS = calloc(1, sizeof(*CS));
-  pthread_key_create(&CS_key, &free);
   pthread_setspecific(CS_key, CS);
 }
+
+CONSTRUCTOR static void init_CS_key()
+{
+  pthread_key_create(&CS_key, &free);
+	init_CS();
+}
+
 static struct cache_stack *get_CS()
 {
   return (struct cache_stack *)pthread_getspecific(CS_key);
@@ -120,7 +126,7 @@ static void *tfunc_wrapper(void *arg)
 
   free(c);
 
-  init_CS_key();
+  init_CS();
   perf_init(gettid());
   res = fn(a);
   perf_deinit();
