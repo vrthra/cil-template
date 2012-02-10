@@ -1,9 +1,6 @@
 
 
 
-
-
-
 open Cil 
 open Tututil
 
@@ -12,10 +9,7 @@ module S = String
 module L = List
 
 
-type color =
-  | Red
-  | Blue
-  | Green
+type color =  Red | Blue | Green
 
 let redStr   = "red"
 let blueStr  = "blue"
@@ -56,7 +50,6 @@ let colors_of_type (t : typ) : color list =
   |> L.map color_of_string
 
 let attr_of_color (c : color) : attribute = Attr(string_of_color c,[])
-
 
 
 type typecheck_result =
@@ -100,8 +93,6 @@ let warning_for_tcres (tcr : typecheck_result) : unit =
   | ColorsMismatch(t1, t2) ->
     E.warn "%a: color mismatch: %a <> %a"
       d_loc (!currentLoc) d_type t1 d_type t2
-
-
 
 
 class colorCheckVisitor = object(self)

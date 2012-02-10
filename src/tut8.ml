@@ -1,9 +1,6 @@
 
 
 
-
-
-
 open Cil 
 open Pretty
 open Tututil
@@ -17,7 +14,6 @@ module SM = Map.Make(struct
   type t = string
   let compare = Pervasives.compare
 end)
-
 
 
 type rgb = exp * exp * exp
@@ -39,7 +35,6 @@ let color_strings = [
   lowerRGBStr;
   upperRGBStr;
 ]
-
 
 
 let rgb_of_color (c : color) : rgb =
@@ -231,7 +226,6 @@ let colors_of_type (c : ctxt) (loc : location) (t : typ) : colors =
              "and one lower bound allowed: %a")
       d_loc (!currentLoc) d_type t;
     []
-
 
 
 type color_checks = {

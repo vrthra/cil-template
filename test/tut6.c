@@ -1,33 +1,21 @@
-#include <stdlib.h>
-#include <stdio.h>
 
-struct foo {
-	int *a;
-	int b;
-	int *c;
-};
 
-struct bar {
-	struct foo f;
-	int *a;
-	int b;
-};
 
-struct baz {
-	struct bar b;
-	int a;
-	int *c;
-};
+
+
+
+
+
+#include <pthread.h>
+
+int counter = 0;
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
 int main()
 {
-	struct baz *b[37];
-	int i;
-
-	for (i = 0; i < 37; i++) {
-		b[i] = malloc(sizeof(struct baz));
-	}
-
+  pthread_mutex_lock(&mtx);
+  counter++;
+  pthread_mutex_unlock(&mtx);
   return 0;
 }
 

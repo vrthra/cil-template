@@ -219,7 +219,7 @@ sub link_after_cil {
         print STDERR "ciltutcc: no input files\n";
         return 0;
     } else {
-	    unshift @libs, @{$self->{CILTUTLIBS}}, "-ldl";
+	    unshift @libs, @{$self->{CILTUTLIBS}}, "-ldl", "-lrt";
         return $self->SUPER::link_after_cil(\@srcs, $dest, $ppargs,
                                             \@cargs, \@libs);
     }
