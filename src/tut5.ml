@@ -40,6 +40,8 @@ and zeroComp (fd : fundec) (blv : lval) : stmt list =
   else []
 
 
+
+
 and zeroField (fd : fundec) (blv : lval) (fi : fieldinfo) : stmt list =
   zeroType fd (addOffsetLval (Field(fi,NoOffset)) blv)
 

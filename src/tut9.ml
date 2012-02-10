@@ -15,7 +15,6 @@ module A  = Array
 module Q  = Queue
 
 module T = Tut7 
-
 type colors = T.color list 
 
 
@@ -44,7 +43,6 @@ class typeNodeMarker (node_count : int ref) = object(self)
       end else t
     in
     ChangeDoChildrenPost(t, action)
-
 end
 
 class typeNodeEraser = object(self)

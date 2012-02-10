@@ -3,10 +3,8 @@
 
 
 
-
 open Cil            
 module E = Errormsg 
-
 
 
 let tut0 (f : file) : unit =

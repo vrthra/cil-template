@@ -27,10 +27,6 @@ let isCacheReportStmt (s : stmt) : block option =
   | _ -> None
 
 
-
-
-
-
 type functions = {
   mutable cache_begin : varinfo;
   mutable cache_end   : varinfo;

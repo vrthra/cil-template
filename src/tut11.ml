@@ -34,12 +34,12 @@ type ops = {
   itimes_op : T.lsymbol; 
   idiv_op   : T.lsymbol; 
   imod_op   : T.lsymbol; 
-  lt_op    : T.lsymbol; 
-  gt_op    : T.lsymbol;
-  lte_op   : T.lsymbol;
-  gte_op   : T.lsymbol;
-  get_op   : T.lsymbol; 
-  set_op   : T.lsymbol;
+  lt_op     : T.lsymbol; 
+  gt_op     : T.lsymbol;
+  lte_op    : T.lsymbol;
+  gte_op    : T.lsymbol;
+  get_op    : T.lsymbol; 
+  set_op    : T.lsymbol;
 }
 
 

@@ -77,6 +77,8 @@ let options = tut_options @ [
 
   
   "", Arg.Unit (fun () -> ()), "General:";
+  "--out", Arg.Set_string outFile, "Set the name of the output file";
+  "--home", Arg.Set_string home, "Set the name of ciltut's home directory";
   "--verbose", Arg.Set verbose,
     "Enable verbose output";
   "--stats", Arg.Set stats,

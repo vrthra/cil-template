@@ -30,7 +30,7 @@ Dependencies only for the theorem proving example (tut11.ml):
 . theorem provers (e.g. alt-ergo)
 . pass --disable-tut11 to the configure script to disable tut11
 
-After untarring the archive, enter the directory and do the following:
+After obtaining the code, enter the directory and do the following:
 
 $ ./configure
 $ make

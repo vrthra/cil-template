@@ -17,10 +17,6 @@ module DF = Dataflow
 let debug = ref false
 
 
-
-
-
-
 type oekind = Top | Odd | Even | Bottom
 
 
@@ -32,7 +28,6 @@ type varmap = int * (varinfo * oekind)
 let id_of_vm   (vm : varmap) : int     = fst vm
 let vi_of_vm   (vm : varmap) : varinfo = vm |> snd |> fst
 let kind_of_vm (vm : varmap) : oekind  = vm |> snd |> snd
-
 
 
 let string_of_oekind (k : oekind) : string =
@@ -56,10 +51,6 @@ let string_of_varmap_list (vml : varmap list) : string =
 
 let varmap_list_pretty () (vml : varmap list) =
   vml |> string_of_varmap_list |> text
-
-
-
-
 
 
 let oekind_neg (k : oekind) : oekind =
@@ -115,10 +106,6 @@ let varmap_list_combine (vml1 : varmap list) (vml2 : varmap list) : varmap list 
 
 let varmap_list_replace (vml : varmap list) (vm : varmap) : varmap list =
   vm :: (L.remove_assoc (id_of_vm vm) vml)
-
-
-
-
 
 
 let kind_of_int64 (i : Int64.t) : oekind =
@@ -181,8 +168,6 @@ and oekind_of_binop (vml : varmap list) (b : binop) (e1 : exp) (e2 : exp) : oeki
 
 
 
-
-
 let varmap_list_kill (vml : varmap list) : varmap list =
   L.map (fun (vid, (vi, k)) ->
     if vi.vaddrof then (vid, (vi, Top)) else (vid, (vi, k)))
@@ -223,8 +208,6 @@ end
 module OddEven = DF.ForwardsDataFlow(OddEvenDF)
 
 
-
-
 let collectVars (fd : fundec) : varmap list =
   (fd.sformals @ fd.slocals)
   |> L.filter (fun vi -> isIntegralType vi.vtype)
@@ -245,12 +228,6 @@ let computeOddEven (fd : fundec) : unit =
     if !debug then E.log "Function with no statements: %s\n" fd.svar.vname
   | Not_found ->
     E.error "No data for first statement? %s" fd.svar.vname
-
-
-
-
-
-
 
 
 let getOddEvens (sid : int) : varmap list option =
