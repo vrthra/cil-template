@@ -45,6 +45,13 @@ class typeNodeMarker (node_count : int ref) = object(self)
     ChangeDoChildrenPost(t, action)
 end
 
+let addNodeMarks (f : file) : int =
+  let cntr = ref 1 in
+  let vis = new typeNodeMarker cntr in
+  visitCilFile vis f;
+  !cntr
+
+
 class typeNodeEraser = object(self)
   inherit nopCilVisitor
 
@@ -54,15 +61,10 @@ class typeNodeEraser = object(self)
     | _ -> DoChildren
 end
 
-let addNodeMarks (f : file) : int =
-  let cntr = ref 1 in
-  let vis = new typeNodeMarker cntr in
-  visitCilFile vis f;
-  !cntr
-
 let eraseNodeMarks (f : file) : unit =
   let vis = new typeNodeEraser in
   visitCilFile vis f
+
 
 
 

@@ -1,9 +1,10 @@
-. Add C code from the runtime library and examples
-  - Command line and output
+Should do:
+. Chapter on comments
+. Chapter on Adding a constructor to do something with globals.
+. Chapter on whole program analysis
+
+Would be nice:
 . Further Readings
 . More background info at beginnings of chapters
 . Main text -> Larger font. Code -> smaller font.
 
-. Chapter on Adding a constructor to do something with globals.
-. Chapter on whole program analysis
-. Chapter on ??

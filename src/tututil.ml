@@ -108,3 +108,50 @@ let sm_find_all (sm : 'a SM.t) (sl : string list) : 'a list =
 
 let sargs (f : 'b -> 'a -> 'c) (x : 'a) (y : 'b) : 'c = f y x
 
+let list_of_growarray (ga : 'a GrowArray.t) : 'a list =
+  GrowArray.fold_right (fun x l -> x :: l) ga []
+
+let array_of_growarray (ga : 'a GrowArray.t) : 'a array =
+  Array.init (GrowArray.max_init_index ga + 1) (GrowArray.get ga)
+
+let array_sort_result (c : 'a -> 'a -> int) (a : 'a array) : 'a array =
+  Array.sort c a;
+  a
+
+let array_filter (f : 'a -> bool) (a : 'a array) : 'a array =
+  a |> Array.to_list |> List.filter f |> Array.of_list
+
+let array_bin_search (c : 'a -> 'a -> int) (x : 'a) (a : 'a array) : int list =
+  if Array.length a = 0 then raise(Invalid_argument "array_bin_search") else
+  let rec helper (lo : int) (hi : int) : int list =
+    if lo >= hi then begin
+      match c a.(hi) x with
+      | 0            -> [hi]
+      | n when n > 0 -> [max 0 hi-1; hi]
+      | _            -> [hi        ; min (hi+1) (Array.length a - 1)]
+    end else begin
+      let mid = (lo + hi) / 2 in
+      match c a.(mid) x with
+      | 0            -> [mid]
+      | n when n > 0 -> helper lo (mid - 1)
+      | _            -> helper (mid + 1) hi
+    end
+  in
+  helper 0 (Array.length a - 1)
+
+type comment = Cabs.cabsloc * string * bool
+
+let cabsloc_of_cilloc (l : location) : Cabs.cabsloc =
+  {Cabs.lineno = l.line; Cabs.filename = l.file; Cabs.byteno = l.byte; Cabs.ident = 0;}
+
+let cilloc_of_cabsloc (l :Cabs.cabsloc) : location =
+  {line = l.Cabs.lineno; file = l.Cabs.filename; byte = l.Cabs.byteno;}
+
+let comment_of_cilloc (l : location) : comment =
+  (cabsloc_of_cilloc l, "", false)
+
+let cabsloc_compare (l1 : Cabs.cabsloc) (l2 : Cabs.cabsloc) : int =
+  compareLoc (cilloc_of_cabsloc l1) (cilloc_of_cabsloc l2)
+
+let comment_compare (c1 : comment) (c2 : comment) : int =
+  cabsloc_compare (fst3 c1) (fst3 c2)
