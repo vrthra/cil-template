@@ -13,11 +13,13 @@ let parseFile : string ref = ref ""
 let warnAsm: bool ref = ref false
 let warnVararg: bool ref = ref false
 let home : string ref = ref ""
+let merge : bool ref = ref false
 
-let num_tuts = 13
+let num_tuts = 14
 let enable_tut : bool ref array = Array.init num_tuts (fun i -> ref false)
 
 let prover : string ref = ref "alt-ergo"
+let tut13out : string ref = ref "callgraph.dot"
 
 let options_ref = ref []
 
@@ -76,6 +78,11 @@ let options = tut_options @ [
    "The prover that Why3 should use in Tut11 [default: alt-ergo]");
 
   
+  ("--tut13-out",
+   Arg.Set_string tut13out,
+   "The output dot file for tut13");
+
+  
   "", Arg.Unit (fun () -> ()), "General:";
   "--out", Arg.Set_string outFile, "Set the name of the output file";
   "--home", Arg.Set_string home, "Set the name of ciltut's home directory";
@@ -85,6 +92,8 @@ let options = tut_options @ [
     "Output optimizer execution time stats";
   "--help", Arg.Unit (fun () -> Arg.usage (align ()) ""; exit 0),
     "Show this help message";
+  "--merge", Arg.Set merge,
+    "Operate in CIL merger mode";
    "--envmachine",
    Arg.Unit (fun _ ->
      try

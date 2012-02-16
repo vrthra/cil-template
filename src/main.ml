@@ -35,6 +35,7 @@ let processOneFile (cil: C.file) : unit =
   if !(O.enable_tut.(10)) then Tut10.tut10 cil;
   if !(O.enable_tut.(11)) then Tut11.tut11 cil;
   if !(O.enable_tut.(12)) then Tut12.tut12 cil;
+  if !(O.enable_tut.(13)) then Tut13.tut13 cil;
   outputFile cil
 ;;
 
@@ -61,16 +62,16 @@ let main () =
   Arg.parse (O.align ()) Ciloptions.recordFile usageMsg;
 
   Ciloptions.fileNames := List.rev !Ciloptions.fileNames;
-  let fileName =
-    match !Ciloptions.fileNames with
-    | [name] -> name
-    | [] -> E.s (E.error "No file names provided")
-    | _ -> E.s (E.error "Too many file names provided (%a)"
-               (Pretty.docList Pretty.text) !Ciloptions.fileNames)
+  let files = List.map parseOneFile !Ciloptions.fileNames in
+  let one =
+    match files with
+	  | [] -> E.s (E.error "No file names provided")
+    | [o] -> o
+    | _ -> Mergecil.merge files "stdout"
   in
 
-  let file = parseOneFile fileName in
-  processOneFile file
+
+  processOneFile one
 ;;  
 
 

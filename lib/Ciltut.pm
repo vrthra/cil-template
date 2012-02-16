@@ -151,6 +151,8 @@ sub collectOneArgument {
         # Intercept the --out argument
         $self->{CILLY_OUT} = $1;
         push @{$self->{CILARGS}}, "--out", $1;
+    } elsif ($arg eq '--merge') {
+        $self->{SEPARATE} = 0;
     } elsif ($arg =~ m|^--|) {
         # All other arguments starting with -- are passed to CIL
         # Split the ==
