@@ -1,7 +1,10 @@
 Should do:
-. Chapter on comments
 . Chapter on Adding a constructor to do something with globals.
-. Chapter on whole program analysis
+. Chapter on DSLs
+
+argument(type, name, [optional, mandatory]) {
+  "-a", "Help text", [default], [arg_assert(exp)]
+};
 
 Would be nice:
 . Further Readings

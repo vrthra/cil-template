@@ -41,6 +41,7 @@
 use strict;
 
 use FindBin;
+use lib "$FindBin::RealBin/../..";
 use lib "$FindBin::RealBin/../lib";
 use lib "$FindBin::RealBin/../cil/bin";
 use lib "$FindBin::RealBin/../cil/lib";

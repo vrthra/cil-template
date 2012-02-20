@@ -3,7 +3,13 @@ static and dynamic program analysis.
 
 Author: Zach Anderson (zachary.anderson@inf.ethz.ch)
 
-Intro:
+1. Intro
+2. Building and Installing
+3. Documentation
+4. Files
+5. Citation
+
+1. Intro:
 ------
 
 CIL is a frontend for C compilers. It takes C code as input, which can then be
@@ -13,7 +19,7 @@ frontend can be made to look like gcc, or whatever, and used directly in your
 build process. This tutorial creates such a frontend, and demonstrates, in
 tutorial form, some nifty things that might be done with it.
 
-Building and Installing:
+2. Building and Installing:
 ------------------------
 
 There are a few dependencies:
@@ -57,7 +63,7 @@ $ ciltutcc --save-temps -o test1 test1.c
 A file called test1.cil.c will be created showing the source file created by
 the frontend before it is passed on to gcc.
 
-Documentation
+3. Documentation
 -------------
 (This is to remind me how to build the docs in my private repo, and so they
 don't apply to the code under this tree. The documentation of which this section
@@ -82,10 +88,10 @@ will build docs/ciltut.pdf along with everything else.
 
 Pass --disable-docs to the configure script to disable document building.
 
-Files:
-------
+4. Files:
+---------
 
-Makefile.in - Edit the "MODULES =" line to add additional ocaml modules. Other
+Makefile.in - Edit the "MODULES =" line to add additional OCaml modules. Other
 parts of the Makefile can probably remain unchanged unless you need to do
 something weird.
 
@@ -109,4 +115,29 @@ sure that the final result links against the code in ciltut-lib/.
 
 test/tut*.c - Test programs for the various tutorial modules.
 
+LICENSE - All the code in this project is licensed under a standard 3-clause
+BSD license.
 
+5. Citation:
+------------
+
+If you use cil-template as a starting point for your project, please make the
+following citation:
+
+Zachary Anderson. A CIL Tutorial: Using CIL for Language Extensions and Program
+  Analysis, <the date given on the document>. <http://the.download.url>.
+
+At the time this README file was written, this evaluates to:
+
+Zachary Anderson. A CIL Tutorial: Using CIL for Language Extensions and Program
+  Analysis, February 2012. http://www.inf.ethz.ch/~azachary.
+
+Or in bibtex format:
+
+@misc{ciltut,
+  title = {A {CIL} Tutorial: Using {CIL} for Language Extensions and Program Analysis},
+  author = {Zachary Anderson},
+  month = Feb,
+  year = 2012,
+  note = {\url{http://www.inf.ethz.ch/~azachary/}},
+}

@@ -34,6 +34,16 @@ uint64_t perf_get_cache_refs();
 uint64_t perf_get_cache_miss();
 uint64_t tut_get_time();
 
+#define argument(argtype, argname, ...) \
+struct ciltut_##argname { \
+  char *small; \
+  char *help; \
+  argtype def; \
+  void *req; \
+} __attribute__((ciltutarg, __VA_ARGS__)) argname =
+
+#define arg_assert(e) (void *__attribute__((ciltut_assert((e)))))NULL
+
 #endif 
 
 

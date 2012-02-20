@@ -7,6 +7,7 @@
 
 #define DATA_SIZE 50000000
 #define TIMES 5
+#define STEP  1
 
 struct array {
   uint64_t *ptr;
@@ -26,7 +27,7 @@ void *thrfunc(void *a)
   cache_report {
     for (j = 0; j < TIMES; j++) {
       ptr[0] = 0x50505050;
-      for (i = 1; i < size; i++)
+      for (i = 1; i < size; i+=STEP)
         ptr[i] *= ptr[i-1];
     }
   }
