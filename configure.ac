@@ -84,6 +84,10 @@ if test "$OCAML_PKG_cil" = "no"; then
   AC_MSG_ERROR([Please install OCaml findlib module 'cil'.])
 fi
 
+AC_CHECK_OCAML_PKG([ocamlgraph])
+if test "$OCAML_PKG_ocamlgraph" = "no"; then
+  AC_MSG_ERROR([Please install OCaml findlib module 'ocamlgraph'.])
+fi
 
 AC_CHECK_FILE(obj/$ARCHOS,, AC_MSG_RESULT(creating obj/$ARCHOS);
                             mkdir -p obj/$ARCHOS)

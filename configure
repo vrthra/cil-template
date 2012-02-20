@@ -563,6 +563,7 @@ DEFAULT_CIL_MODE
 CILTUTHOME
 ARCHOS
 HAVE_WHY3
+OCAML_PKG_ocamlgraph
 OCAML_PKG_cil
 OCAMLFIND
 OCAMLBUILD
@@ -3969,6 +3970,33 @@ if test "$OCAML_PKG_cil" = "no"; then
   as_fn_error $? "Please install OCaml findlib module 'cil'." "$LINENO" 5
 fi
 
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OCaml findlib package ocamlgraph" >&5
+$as_echo_n "checking for OCaml findlib package ocamlgraph... " >&6; }
+
+  unset found
+  unset pkg
+  found=no
+  for pkg in ocamlgraph  ; do
+    if $OCAMLFIND query $pkg >/dev/null 2>/dev/null; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
+$as_echo "found" >&6; }
+      OCAML_PKG_ocamlgraph=$pkg
+      found=yes
+      break
+    fi
+  done
+  if test "$found" = "no" ; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+$as_echo "not found" >&6; }
+    OCAML_PKG_ocamlgraph=no
+  fi
+
+
+
+if test "$OCAML_PKG_ocamlgraph" = "no"; then
+  as_fn_error $? "Please install OCaml findlib module 'ocamlgraph'." "$LINENO" 5
+fi
 
 as_ac_File=`$as_echo "ac_cv_file_obj/$ARCHOS" | $as_tr_sh`
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for obj/$ARCHOS" >&5

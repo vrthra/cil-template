@@ -61,17 +61,17 @@ SOURCEDIRS   = src
 # Add additional modules here. Order matters. If module x depends on module y,
 # then x has to come after y in the list.
 MODULES = tututil ciltutoptions \
-          tut0 tut1 tut2 tut3 tut4 tut5 tut6 tut7 tut8 tut9 tut10 tut11 tut12 main
+          tut0 tut1 tut2 tut3 tut4 tut5 tut6 tut7 tut8 tut9 tut10 tut11 tut12 tut13 main
 
 OCAMLFIND = @OCAMLFIND@
 CILINC = $(shell $(OCAMLFIND) query cil)
 
-COMPILEFLAGS = -w x -I $(CILINC)
-LINKFLAGS    = -I $(CILINC)
+COMPILEFLAGS = -w x -I $(CILINC) -I +ocamlgraph
+LINKFLAGS    = -I $(CILINC) -I +ocamlgraph
 
 ifeq ($(BUILD_TUT11),true)
-  COMPILEFLAGS += -I +ocamlgraph -I +why3
-  LINKFLAGS += -I +ocamlgraph -I +why3
+  COMPILEFLAGS += -I +why3
+  LINKFLAGS += -I +why3
   PREPROC_ARG = -DBUILD_TUT11
 endif
 PREPROC = camlp4o pa_macro.cmo $(PREPROC_ARG)
@@ -84,10 +84,10 @@ PROJECT_MODULES    = $(MODULES)
 PROJECT_CMODULES =
 EXT_PROJ_CMODS =
 
-PROJECT_LIBS       = unix str nums
+PROJECT_LIBS       = unix str nums graph
 
 ifeq ($(BUILD_TUT11), true)
-  PROJECT_LIBS += dynlink graph why3
+  PROJECT_LIBS += dynlink why3
 endif
 PROJECT_LIBS += cil
 
