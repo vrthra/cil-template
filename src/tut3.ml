@@ -1,9 +1,6 @@
 
 
 
-
-
-
 open Cil 
 open Pretty
 open Tututil
@@ -21,8 +18,6 @@ type oekind = Top | Odd | Even | Bottom
 
 
 type varmap = int * (varinfo * oekind)
-
-
 
 
 let id_of_vm   (vm : varmap) : int     = fst vm
@@ -120,23 +115,19 @@ let kind_of_int (i : int) : oekind =
 let rec oekind_of_exp (vml : varmap list) (e : exp) : oekind =
   match e with
   | Const(CInt64(i, _, _)) -> kind_of_int64 i
-  | Const _ -> Top
   | Lval(Var vi, NoOffset) -> vml |> L.assoc vi.vid |> snd
-  | Lval _ -> Top
   | SizeOf _ | SizeOfE _ | SizeOfStr _ | AlignOf _ | AlignOfE _ ->
     e |> constFold true |> oekind_of_exp vml
   | UnOp(uo, e, t) -> oekind_of_unop vml uo e
   | BinOp(bo, e1, e2, t) -> oekind_of_binop vml bo e1 e2
   | CastE(t, e) -> oekind_of_exp vml e
-  | AddrOf _ -> Top
-  | StartOf _ -> Top
+  | _ -> Top
 
 and oekind_of_unop (vml : varmap list) (u : unop) (e : exp) : oekind =
   match u with
   | Neg  -> oekind_of_exp vml e
   | BNot -> e |> oekind_of_exp vml |> oekind_neg
   | LNot -> Top
-
 
 
 and oekind_of_binop (vml : varmap list) (b : binop) (e1 : exp) (e2 : exp) : oekind =

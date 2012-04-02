@@ -1,9 +1,6 @@
 
 
 
-
-
-
 open Cil
 open Pretty
 open Tututil
@@ -16,9 +13,6 @@ module Q  = Queue
 
 module T = Tut7 
 type colors = T.color list 
-
-
-
 
 
 let nodeStr = "Node"
@@ -67,8 +61,6 @@ let eraseNodeMarks (f : file) : unit =
 
 
 
-
-
 type node = {
   mutable ncolors   : colors;
   mutable incoming  : int list;
@@ -85,8 +77,6 @@ type graph = node array
 let graphCreate (n : int) : graph = A.init n newNode
 
 
-
-
 let graphAddEdge (g : graph) (from_node : int) (to_node : int) : unit =
   if not(L.mem to_node g.(from_node).outgoing) then
     g.(from_node).outgoing <- to_node :: g.(from_node).outgoing;
@@ -97,8 +87,6 @@ let rec typesAddEdge (g : graph) (from_type : typ) (to_type : typ) : unit =
   let from_id = node_of_type from_type in
   let to_id   = node_of_type to_type   in
   graphAddEdge g from_id to_id
-
-
 
 
 let addEdgesForCallArgs (g : graph) (fe : exp) (aes  : exp list) : unit =
@@ -156,8 +144,6 @@ let fileBuildGraph (f : file) : graph =
   |> onlyFunctions
   |> iterGlobals f;
   g
-
-
 
 
 class nodeColorFinder (g : graph) = object(self)

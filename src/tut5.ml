@@ -1,9 +1,6 @@
 
 
 
-
-
-
 open Cil 
 open Pretty
 open Tututil
@@ -38,8 +35,6 @@ and zeroComp (fd : fundec) (blv : lval) : stmt list =
   if ci.cstruct then sl
   else if sl <> [] then [L.hd sl]
   else []
-
-
 
 
 and zeroField (fd : fundec) (blv : lval) (fi : fieldinfo) : stmt list =

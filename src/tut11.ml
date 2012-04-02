@@ -6,9 +6,6 @@ IFDEF BUILD_TUT11 THEN
 
 
 
-
-
-
 open Cil
 open Tututil
 
@@ -23,7 +20,6 @@ module E = W.Env
 module Wc = W.Whyconf
 module D = W.Decl
 module P = W.Pretty
-
 
 
 
@@ -43,7 +39,6 @@ type ops = {
 }
 
 
-
 type wctxt = {
 
   mutable env    : E.env;
@@ -56,7 +51,6 @@ type wctxt = {
   mutable memory : T.vsymbol;
   mutable vars   : T.vsymbol SM.t;
 }
-
 
 
 let initOps (it : Th.theory) (dt : Th.theory) (mt : Th.theory) : ops =
@@ -75,7 +69,6 @@ let initOps (it : Th.theory) (dt : Th.theory) (mt : Th.theory) : ops =
    set_op      = Th.ns_find_ls mt.Th.th_export ["set"];
 
   }
-
 
 
 let initWhyCtxt (p : string) : wctxt = 
@@ -109,17 +102,14 @@ let initWhyCtxt (p : string) : wctxt =
 
 
 
-
 let invariantAttrStr = "invariant"
 let postAttrStr      = "post"
 let preAttrStr       = "pre"
 let tut11_attrs = [invariantAttrStr; postAttrStr; preAttrStr;]
 
 
-
 let term_of_int (i : int) : T.term   = i |> string_of_int   |> T.t_int_const
 let term_of_i64 (i : int64) : T.term = i |> Int64.to_string |> T.t_int_const
-
 
 
 let make_symbol (s : string) : T.vsymbol =
@@ -129,7 +119,6 @@ let freshvar_of_ap (ap : attrparam) : string * T.vsymbol =
   match ap with
   | ACons(n, []) -> n, make_symbol n
   | _ -> Em.s(Em.error "Names only")
-
 
 
 let rec term_of_attrparam (wc : wctxt) (ap : attrparam) : T.term =
@@ -158,7 +147,6 @@ let rec term_of_attrparam (wc : wctxt) (ap : attrparam) : T.term =
   | _ -> Em.s(Em.error "Attrparam is not a term: %a" d_attrparam ap)
 
 
-
 and term_of_forall (wc : wctxt) (apl : attrparam list) : T.term =
   let fat  = apl |> L.rev |> L.hd in
   let vl   = apl |> L.rev |> L.tl |> L.map freshvar_of_ap in
@@ -169,12 +157,10 @@ and term_of_forall (wc : wctxt) (apl : attrparam list) : T.term =
   T.t_forall_close (L.map snd vl) [] t
 
 
-
 and term_of_implies (wc : wctxt) (a : attrparam) (c : attrparam) : T.term =
   let at = term_of_attrparam wc a in
   let ct = term_of_attrparam wc c in
   T.t_implies at ct
-
 
 
 and term_of_apuop (wc : wctxt) (u : unop) (ap : attrparam) : T.term =
@@ -208,12 +194,10 @@ and term_of_apbop (wc : wctxt) (b : binop) (ap1 : attrparam) (ap2 : attrparam) :
               d_attrparam ap1 d_binop b d_attrparam ap2)
 
 
-
 and term_of_star (wc : wctxt) (a : attrparam) : T.term =
   let at = term_of_attrparam wc a in
   let mt = T.t_var wc.memory in
   T.t_app_infer wc.ops.get_op [mt;at]
-
 
 
 and term_of_index (wc : wctxt) (base : attrparam) (index : attrparam) : T.term =
@@ -224,12 +208,10 @@ and term_of_index (wc : wctxt) (base : attrparam) (index : attrparam) : T.term =
   T.t_app_infer wc.ops.get_op [mt; addr]
 
 
-
 let oldvar_of_ap (wc : wctxt) (ap : attrparam) : T.vsymbol =
   match ap with
   | ACons(n, []) -> SM.find n wc.vars
   | _ -> Em.s(Em.error "Names only")
-
 
 
 let inv_of_attrs (wc : wctxt) (a : attributes)
@@ -243,7 +225,6 @@ let inv_of_attrs (wc : wctxt) (a : attributes)
   | _ -> Em.s(Em.error "Malformed invariant attribute: %a" d_attrlist a)
 
 
-
 let cond_of_function (k : string) (wc : wctxt) (fd : fundec) : T.term option =
   match filterAttributes k (typeAttrs fd.svar.vtype) with
   | [Attr(_,[ap])] -> Some(term_of_attrparam wc ap)
@@ -251,7 +232,6 @@ let cond_of_function (k : string) (wc : wctxt) (fd : fundec) : T.term option =
 
 let post_of_function = cond_of_function postAttrStr
 let pre_of_function  = cond_of_function preAttrStr
-
 
 
 let iterm_of_bterm (t : T.term) : T.term = T.t_if t (term_of_int 1) (term_of_int 0)
@@ -309,7 +289,6 @@ and term_of_bop (wc : wctxt) (b : binop) (e1 : exp) (e2 : exp) : T.term =
 
 
 
-
 let term_of_inst (wc : wctxt) (i : instr) : T.term -> T.term =
   match i with
   | Set((Var vi, NoOffset), e, loc) ->
@@ -323,7 +302,6 @@ let term_of_inst (wc : wctxt) (i : instr) : T.term -> T.term =
     let ume = T.t_app_infer wc.ops.set_op [T.t_var ms; tme; te] in
     T.t_let_close ms ume
   | _ -> Em.s (Em.error "term_of_inst: We can only handle assignment")
-
 
 
 let rec term_of_stmt (wc : wctxt) (s : stmt) : T.term -> T.term =
@@ -343,13 +321,11 @@ let rec term_of_stmt (wc : wctxt) (s : stmt) : T.term -> T.term =
   | _ -> Em.s(Em.error "No support for try-finally, or try-except")
 
 
-
 and term_of_if (wc : wctxt) (e : exp) (tb : block) (fb : block) : T.term -> T.term =
   let te  = e |> term_of_exp wc |> bterm_of_iterm in
   let tbf = term_of_block wc tb in
   let fbf = term_of_block wc fb in
   (fun t -> T.t_if te (tbf t) (fbf t))
-
 
 
 and term_of_loop (wc : wctxt) (b : block) : T.term -> T.term =
@@ -363,9 +339,6 @@ and term_of_loop (wc : wctxt) (b : block) : T.term -> T.term =
     |> T.t_implies li           
     |> T.t_forall_close lvl' [] 
     |> T.t_and li)              
-
-
-
 
 
 and term_of_block (wc : wctxt) (b : block) : T.term -> T.term =
@@ -389,7 +362,6 @@ let vcgen (wc : wctxt) (fd : fundec) (pre : T.term option) : T.term -> T.term =
   (fun t -> T.t_forall_close (vsymbols_of_function wc fd) [] (pre_impl_t wc fd pre t))
 
 
-
 let validateWhyCtxt (w : wctxt) (p : T.term) : unit = 
 
   Format.printf "@[validate:@ %a@]@." W.Pretty.print_term p;
@@ -404,7 +376,6 @@ let validateWhyCtxt (w : wctxt) (p : T.term) : unit =
   Format.printf "@[Prover answers:@ %a@]@.@[%s@]@."
     W.Call_provers.print_prover_result res res.W.Call_provers.pr_output;
   ()
-
 
 
 
@@ -434,7 +405,6 @@ end
 let eraseAttrs (f : file) : unit =
   let vis = new attrEraserVisitor in
   visitCilFile vis f
-
 
 
 

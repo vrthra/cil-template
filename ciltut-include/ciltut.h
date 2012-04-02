@@ -1,6 +1,7 @@
 #ifndef _CILTUT_H_
 #define _CILTUT_H_
 
+#include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
 
@@ -34,15 +35,34 @@ uint64_t perf_get_cache_refs();
 uint64_t perf_get_cache_miss();
 uint64_t tut_get_time();
 
-#define argument(argtype, argname, ...) \
-struct ciltut_##argname { \
-  char *small; \
-  char *help; \
-  argtype def; \
-  void *req; \
-} __attribute__((ciltutarg, __VA_ARGS__)) argname =
+#include <getopt.h>
+size_t s;
+struct option o;
 
-#define arg_assert(e) (void *__attribute__((ciltut_assert((e)))))NULL
+#pragma cilnoremove("getoptdummy")
+static int getoptdummy()
+{
+  int i;
+  optarg = NULL;
+  sscanf(NULL,"%d",&i);
+  return getopt_long(0, NULL, NULL, NULL, NULL);
+}
+
+#define ARG_HAS_OPT 1
+
+#define argument(argtype, argname, ...) \
+argtype argname; \
+int argname##got; \
+struct ciltut_##argname { \
+  char    *short_form; \
+  char    *help_text; \
+  char    *format; \
+  argtype  def; \
+  void    *requires; \
+  int      has_opt; \
+} __attribute__((ciltutarg, ##__VA_ARGS__)) _ciltut_##argname =
+
+#define arg_assert(e) (void *__attribute__((ciltut_assert((e)))))0
 
 #endif 
 

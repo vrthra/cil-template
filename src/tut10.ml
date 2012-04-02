@@ -1,17 +1,12 @@
 
 
 
-
-
-
-
 open Cil
 open Pretty
 open Tututil
 
 module E = Errormsg
 module L = List
-
 
 
 let cacheReportStr = "cache_report"

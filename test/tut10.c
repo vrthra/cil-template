@@ -11,7 +11,7 @@
 
 struct array {
   uint64_t *ptr;
-	int size;
+  int size;
 };
 
 void *thrfunc(void *a)
@@ -20,9 +20,6 @@ void *thrfunc(void *a)
   uint64_t *ptr = arr->ptr;
   int size = arr->size;
   int i,j;
-
-  printf("thread: ptr = %p, size = %d\n", ptr, size);
-  fflush(stdout);
 
   cache_report {
     for (j = 0; j < TIMES; j++) {

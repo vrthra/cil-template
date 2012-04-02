@@ -2,14 +2,10 @@
 
 
 
-
-
 open Cil 
 open Pretty
 open Tututil
 module L = List
-
-
 
 
 type functions = {
@@ -56,8 +52,6 @@ let initTutFunctions (f : file) : unit =
 
 
 
-
-
 let makeInstrStmts (counter : varinfo) (loc : location)
                    : stmt * stmt * stmt * stmt =
   let f, l = mkString loc.file, integer loc.line in
@@ -86,9 +80,6 @@ class loopInstrumenterClass (fd : fundec) = object(self)
     ChangeDoChildrenPost(s, action)
 
 end
-
-
-
 
 
 let processFunction (fd : fundec) (loc : location) : unit =

@@ -155,3 +155,31 @@ let cabsloc_compare (l1 : Cabs.cabsloc) (l2 : Cabs.cabsloc) : int =
 
 let comment_compare (c1 : comment) (c2 : comment) : int =
   cabsloc_compare (fst3 c1) (fst3 c2)
+
+let rec findType (gl : global list) (typname : string) : typ =
+  match gl with
+  | [] -> E.s (E.error "Type not found: %s" typname)
+  | GType(ti,_) :: _        when ti.tname = typname -> TNamed(ti,[])
+  | GCompTag(ci,_) :: _     when ci.cname = typname -> TComp(ci,[])
+  | GCompTagDecl(ci,_) :: _ when ci.cname = typname -> TComp(ci,[])
+  | GEnumTag(ei,_) :: _     when ei.ename = typname -> TEnum(ei,[])
+  | GEnumTagDecl(ei,_) :: _ when ei.ename = typname -> TEnum(ei,[])
+  | _ :: rst -> findType rst typname
+
+let rec findGlobalVar (gl : global list) (varname : string) : varinfo =
+  match gl with
+  | [] -> E.s (E.error "Global not found: %s" varname)
+  | GVarDecl(vi, _) :: _ when vi.vname = varname -> vi
+  | GVar(vi, _, _) :: _ when vi.vname = varname -> vi
+  | _ :: rst -> findGlobalVar rst varname
+
+let mallocType (f : file) : typ =
+  let size_t = findType f.globals "size_t" in
+  TFun(voidPtrType, Some ["s",size_t,[]], false, [])
+
+let iterCompound ~(implicit : bool)
+                 ~(doinit : offset -> init -> typ -> unit -> unit)
+                 ~(ct : typ) ~(initl : (offset * init) list)
+                 : unit
+  =
+  foldLeftCompound ~implicit ~doinit ~ct ~initl ~acc:()
