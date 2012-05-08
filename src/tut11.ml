@@ -78,12 +78,13 @@ let initWhyCtxt (p : string) : wctxt =
   Wc.load_plugins main;
   let provers = Wc.get_provers config in
   let prover =
-    try W.Util.Mstr.find p provers
+    
+    try Wc.prover_by_id config p
     with Not_found -> Em.s (Em.error "Prover %s not found." p)
   in
   let env = E.create_env (W.Whyconf.loadpath main) in
-  let driver =
-    try W.Driver.load_driver env prover.Wc.driver
+  let driver : W.Driver.driver =
+    try W.Driver.load_driver env prover.Wc.driver []
     with e -> Em.s (Em.error "Failed to load driver for %s." p)
   in
   let int_theory = E.find_theory env ["int"] "Int" in

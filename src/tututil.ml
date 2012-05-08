@@ -166,6 +166,19 @@ let rec findType (gl : global list) (typname : string) : typ =
   | GEnumTagDecl(ei,_) :: _ when ei.ename = typname -> TEnum(ei,[])
   | _ :: rst -> findType rst typname
 
+let rec findFunction (gl : global list) (fname : string) : fundec =
+    match gl with
+    | [] -> raise(Failure "Function not found")
+    | GFun(fd,_) :: _ when fd.svar.vname = fname -> fd
+    | _ :: rst -> findFunction rst fname
+
+let rec findCompinfo (gl : global list) (ciname : string) : compinfo =
+	match gl with
+	| [] -> raise(Failure "Compinfo not found")
+	| GCompTag(ci, _) :: _ when ci.cname = ciname -> ci
+	| GCompTagDecl(ci, _) :: _ when ci.cname = ciname -> ci
+	| _ :: rst -> findCompinfo rst ciname
+
 let rec findGlobalVar (gl : global list) (varname : string) : varinfo =
   match gl with
   | [] -> E.s (E.error "Global not found: %s" varname)

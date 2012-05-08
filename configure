@@ -556,12 +556,14 @@ PACKAGE_URL=
 ac_unique_file="src/main.ml"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+BUILD_TUT15
 BUILD_TUT11
 OCAMLINC
 CILTUT_VERSION
 DEFAULT_CIL_MODE
 CILTUTHOME
 ARCHOS
+OCAML_PKG_ocamlyices
 HAVE_WHY3
 OCAML_PKG_ocamlgraph
 OCAML_PKG_cil
@@ -644,6 +646,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_tut11
+enable_tut15
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1268,6 +1271,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-tut11         Do not build tut11
+  --disable-tut15         Do not build tut15
 
 Some influential environment variables:
   CC          C compiler command
@@ -4090,6 +4094,56 @@ if test $BUILD_TUT11 = "false"; then
 $as_echo "$as_me: WARNING: Why3 not found. Tut11 won't be built" >&2;}
 fi
 
+# Check for yices and ocamlyices to see if we should build tut15
+#
+#
+# Check whether --enable-tut15 was given.
+if test "${enable_tut15+set}" = set; then :
+  enableval=$enable_tut15; ac_build_tut15=$enableval
+else
+  ac_build_tut15=yes
+fi
+
+
+if test "x$ac_build_tut15" = "xno"; then
+  HAVE_YICES=false
+else
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OCaml findlib package ocamlyices" >&5
+$as_echo_n "checking for OCaml findlib package ocamlyices... " >&6; }
+
+  unset found
+  unset pkg
+  found=no
+  for pkg in ocamlyices  ; do
+    if $OCAMLFIND query $pkg >/dev/null 2>/dev/null; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
+$as_echo "found" >&6; }
+      OCAML_PKG_ocamlyices=$pkg
+      found=yes
+      break
+    fi
+  done
+  if test "$found" = "no" ; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+$as_echo "not found" >&6; }
+    OCAML_PKG_ocamlyices=no
+  fi
+
+
+
+  if test "x$OCAML_PKG_ocamlyices" = "xno"; then
+    as_fn_error $? "*** Couldn't find Ocamlyices installation. Use --disable-tut15, or install yices and ocamlyices" "$LINENO" 5
+  fi
+
+  BUILD_TUT15="true"
+fi
+if test $BUILD_TUT15 = "false"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Ocamlyices not found. Tut15 won't be built" >&5
+$as_echo "$as_me: WARNING: Ocamlyices not found. Tut15 won't be built" >&2;}
+fi
+
+
 
 
 
@@ -5301,4 +5355,5 @@ Ciltut configuration:
   Ciltut home:                   $CILTUTHOME
   Ciltut version:                $CILTUT_VERSION
   Build Tutorial 11              $BUILD_TUT11
+  Build Tutorial 15              $BUILD_TUT15
 EOF

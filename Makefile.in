@@ -16,6 +16,10 @@ ifndef BUILD_TUT11
   BUILD_TUT11 = @BUILD_TUT11@
 endif
 
+ifndef BUILD_TUT15
+	BUILD_TUT15 = @BUILD_TUT15@
+endif
+
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 libdir = @libdir@
@@ -61,7 +65,7 @@ SOURCEDIRS   = src
 # Add additional modules here. Order matters. If module x depends on module y,
 # then x has to come after y in the list.
 MODULES = tututil ciltutoptions \
-          tut0 tut1 tut2 tut3 tut4 tut5 tut6 tut7 tut8 tut9 tut10 tut11 tut12 tut13 tut14 main
+          tut0 tut1 tut2 tut3 tut4 tut5 tut6 tut7 tut8 tut9 tut10 tut11 tut12 tut13 tut14 tut15 main
 
 OCAMLFIND = @OCAMLFIND@
 CILINC = $(shell $(OCAMLFIND) query cil)
@@ -74,6 +78,11 @@ ifeq ($(BUILD_TUT11),true)
   LINKFLAGS += -I +why3
   PREPROC_ARG = -DBUILD_TUT11
 endif
+
+ifeq ($(BUILD_TUT15),true)
+	PREPROC_ARG += -DBUILD_TUT15
+endif
+
 PREPROC = camlp4o pa_macro.cmo $(PREPROC_ARG)
 
 include Makefile.ocaml

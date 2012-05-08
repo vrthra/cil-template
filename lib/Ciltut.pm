@@ -63,6 +63,8 @@ sub new {
     # Override Cilly's default
     $self->{SEPARATE} = 1;
 
+    $self->{TUT15} = 0;
+
     bless $self, $class;
 }
 
@@ -118,6 +120,9 @@ sub collectOneArgument {
         push @{$self->{CILARGS}}, "--out", $1;
     } elsif ($arg eq '--merge') {
         $self->{SEPARATE} = 0;
+    } elsif ($arg eq '--enable-tut15') {
+        $self->{TUT15} = 1;
+        push @{$self->{CILARGS}}, "--enable-tut15";
     } elsif ($arg =~ m|^--|) {
         # All other arguments starting with -- are passed to CIL
         # Split the ==
@@ -186,7 +191,14 @@ sub link_after_cil {
         print STDERR "ciltutcc: no input files\n";
         return 0;
     } else {
-	    unshift @libs, @{$self->{CILTUTLIBS}}, "-ldl", "-lrt";
+        unshift @libs, @{$self->{CILTUTLIBS}}, "-ldl", "-lrt";
+        if ($self->{TUT15} == 1) {
+            my $ocy = `ocamlfind query ocamlyices`;
+            chomp($ocy);
+            push @libs, "-L/usr/lib/ocaml", "-lunix", "-lnums", "-lcamlrun",
+                           "-lm", "-lcurses", "-L$ocy" , "-locamlyices",
+                           "-lstdc++", "/usr/local/lib/libyices.a";
+        }
         return $self->SUPER::link_after_cil(\@srcs, $dest, $ppargs,
                                             \@cargs, \@libs);
     }
@@ -200,7 +212,7 @@ sub linktolib {
         print STDERR "ciltutcc: no input files\n";
         return 0;
     } else {
-    	push @libs, @{$self->{CILTUTLIBS}};
+        push @libs, @{$self->{CILTUTLIBS}};
         return $self->SUPER::linktolib(\@srcs, $dest, $ppargs,
                                        $ccargs, $ldargs);
     }

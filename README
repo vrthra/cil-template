@@ -36,6 +36,10 @@ Dependencies only for the theorem proving example (tut11.ml):
 . theorem provers (e.g. alt-ergo)
 . pass --disable-tut11 to the configure script to disable tut11
 
+Dependencies only for the automated test generation example (tut15.ml):
+. Yices SMT solver (http://yices.csl.sri.com/)
+. ocamlyices (https://github.com/polazarus/ocamlyices)
+
 After obtaining the code, enter the directory and do the following:
 
 $ ./configure

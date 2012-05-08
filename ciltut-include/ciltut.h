@@ -64,6 +64,45 @@ struct ciltut_##argname { \
 
 #define arg_assert(e) (void *__attribute__((ciltut_assert((e)))))0
 
+
+#define autotest    __attribute__((autotest))
+#define instrument  __attribute__((instrument))
+#define input       __attribute__((input))
+#define inputarr(s) __attribute__((inputarr(s)))
+#define inputnt     __attribute__((inputnt))
+
+void assign(uint64_t lhs, uint64_t op, int opk, uint64_t opv);
+void assgn_bop(uint64_t lhs, uint64_t lhsv, int bop,
+               uint64_t op1, int op1k, uint64_t op1v,
+               uint64_t op2, int op2k, uint64_t op2v);
+void assgn_uop(uint64_t lhs, uint64_t lhsv, int uop,
+               uint64_t op, int opk, uint64_t opv);
+
+void cond(int cid, int r, uint64_t op, int opk, uint64_t opv);
+void cond_bop(int cid, int bop, int r,
+              uint64_t op1, int op1k, uint64_t op1v,
+              uint64_t op2, int op2k, uint64_t op2v);
+void cond_uop(int cid, int uop, int r,
+              uint64_t op, int opk, uint64_t opv);
+
+void register_input(char *name, uint64_t addr, int bits);
+void register_arr_input(char *name, uint64_t start, int sz, int cnt);
+void register_nt_input(char *name, char *start);
+
+#pragma cilnoremove("autotest_finished")
+extern int autotest_finished;
+void gen_new_input();
+
+void val_push(uint64_t v);
+uint64_t val_pop(char *name);
+void pop_array(char *name, char *base, int cnt, int sz);
+void pop_nt(char * name, char *base);
+
+void return_push(uint64_t p, uint64_t v);
+void return_pop(uint64_t p, uint64_t v);
+
+void autotest_reset();
+
 #endif 
 
 

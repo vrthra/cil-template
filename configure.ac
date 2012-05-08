@@ -116,12 +116,34 @@ if test $BUILD_TUT11 = "false"; then
   AC_MSG_WARN([Why3 not found. Tut11 won't be built])
 fi
 
+# Check for yices and ocamlyices to see if we should build tut15
+#
+#
+AC_ARG_ENABLE([tut15],
+              AS_HELP_STRING([--disable-tut15], [Do not build tut15]),
+              [ac_build_tut15=$enableval], [ac_build_tut15=yes])
+
+if test "x$ac_build_tut15" = "xno"; then
+  HAVE_YICES=false
+else
+  AC_CHECK_OCAML_PKG([ocamlyices])
+  if test "x$OCAML_PKG_ocamlyices" = "xno"; then
+    AC_MSG_ERROR([*** Couldn't find Ocamlyices installation. Use --disable-tut15, or install yices and ocamlyices])
+  fi
+
+  BUILD_TUT15="true"
+fi
+if test $BUILD_TUT15 = "false"; then
+  AC_MSG_WARN([Ocamlyices not found. Tut15 won't be built])
+fi
+
 AC_SUBST(ARCHOS)
 AC_SUBST(CILTUTHOME)
 AC_SUBST(DEFAULT_CIL_MODE)
 AC_SUBST(CILTUT_VERSION)
 AC_SUBST(OCAMLINC)
 AC_SUBST(BUILD_TUT11)
+AC_SUBST(BUILD_TUT15)
 
 # finish the configure script and generate various files; ./configure
 # will apply variable substitutions to <filename>.in to generate <filename>;
@@ -163,4 +185,5 @@ Ciltut configuration:
   Ciltut home:                   $CILTUTHOME
   Ciltut version:                $CILTUT_VERSION
   Build Tutorial 11              $BUILD_TUT11
+  Build Tutorial 15              $BUILD_TUT15
 EOF

@@ -10,9 +10,38 @@ configure_file (
 	"${PROJECT_BINARY_DIR}/src/config.h"
 )
 
-set(SHELTER_SRCS ciltut_libc.c tut4.c tut8.c tut6.c tut10.c)
+set(OCAML_COMPILE ocamlc)
 
-add_library(ciltut-static ${SHELTER_SRCS})
+execute_process(
+  COMMAND ocamlfind query ocamlyices
+  OUTPUT_VARIABLE OCAML_YICES OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+set(CONC_SRCS
+ concolic/concolic_util.ml
+ concolic/concolic_exp.ml
+ concolic/concolic_ctxt.ml
+ concolic/concolic_paths.ml
+ concolic/concolic_callbacks.ml)
+
+add_custom_target(concolic_callbacks ${CONC_SRCS})
+add_custom_command(
+  SOURCE  ${CONC_SRCS}
+  COMMAND ${OCAML_COMPILE}
+  ARGS    -custom -output-obj -o concolic_callbacks.o -I concolic/ -I ${OCAML_YICES} -I +gmp gmp.cma nums.cma ocamlyices.cma ${CONC_SRCS}
+  TARGET  concolic_callbacks
+  OUTPUTS concolic_callbacks.o
+  DEPENDS ${CONC_SRCS}
+)
+add_custom_command(
+  SOURCE  concolic_callbacks
+  TARGET  concolic_callbacks
+  DEPENDS concolic_callbacks.o
+)
+
+set(SHELTER_SRCS ciltut_libc.c tut4.c tut8.c tut6.c tut10.c tut15.c)
+
+add_library(ciltut-static ${SHELTER_SRCS} concolic_callbacks.o)
 set_target_properties(ciltut-static PROPERTIES
   COMPILE_FLAGS "-O2 -ggdb"
 )
@@ -20,7 +49,7 @@ set_target_properties(ciltut-static
   PROPERTIES OUTPUT_NAME ciltut
   CLEAN_DIRECT_OUTPUT 1)
 
-add_library(ciltut-shared SHARED ${SHELTER_SRCS})
+add_library(ciltut-shared SHARED ${SHELTER_SRCS} concolic_callbacks.o)
 set_target_properties(ciltut-shared PROPERTIES
   COMPILE_FLAGS "-O2 -ggdb"
 )
