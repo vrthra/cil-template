@@ -119,6 +119,7 @@ fi
 # Check for yices and ocamlyices to see if we should build tut15
 #
 #
+BUILD_TUT15="false"
 AC_ARG_ENABLE([tut15],
               AS_HELP_STRING([--disable-tut15], [Do not build tut15]),
               [ac_build_tut15=$enableval], [ac_build_tut15=yes])

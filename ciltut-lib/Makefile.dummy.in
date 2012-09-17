@@ -1,3 +1,19 @@
+ifndef ARCHOS
+  ARCHOS = @ARCHOS@
+endif
+
+ifndef BUILD_DOCS
+  BUILD_DOCS = @BUILD_DOCS@
+endif
+
+ifndef BUILD_TUT11
+  BUILD_TUT11 = @BUILD_TUT11@
+endif
+
+ifndef BUILD_TUT15
+	BUILD_TUT15 = @BUILD_TUT15@
+endif
+
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 libdir = @libdir@
@@ -7,7 +23,7 @@ all: Makefile
 	make -f Makefile
 
 Makefile: CMakeLists.txt src/CMakeLists.txt
-	cmake .
+	cmake . -DBUILD_TUT11=$(BUILD_TUT11) -DBUILD_TUT15=$(BUILD_TUT15)
 
 clean:
 	make clean

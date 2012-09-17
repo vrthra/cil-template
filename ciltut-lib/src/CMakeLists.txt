@@ -10,6 +10,7 @@ configure_file (
 	"${PROJECT_BINARY_DIR}/src/config.h"
 )
 
+if(BUILD_TUT15="true")
 set(OCAML_COMPILE ocamlc)
 
 execute_process(
@@ -38,10 +39,14 @@ add_custom_command(
   TARGET  concolic_callbacks
   DEPENDS concolic_callbacks.o
 )
+set(CONCOLIC_LIB concolic_callbacks.o)
+else()
+set(CONCOLIC_LIB )
+endif()
 
 set(SHELTER_SRCS ciltut_libc.c tut4.c tut8.c tut6.c tut10.c tut15.c)
 
-add_library(ciltut-static ${SHELTER_SRCS} concolic_callbacks.o)
+add_library(ciltut-static ${SHELTER_SRCS} ${CONCOLIC_LIB})
 set_target_properties(ciltut-static PROPERTIES
   COMPILE_FLAGS "-O2 -ggdb"
 )
@@ -49,7 +54,7 @@ set_target_properties(ciltut-static
   PROPERTIES OUTPUT_NAME ciltut
   CLEAN_DIRECT_OUTPUT 1)
 
-add_library(ciltut-shared SHARED ${SHELTER_SRCS} concolic_callbacks.o)
+add_library(ciltut-shared SHARED ${SHELTER_SRCS} ${CONCOLIC_LIB})
 set_target_properties(ciltut-shared PROPERTIES
   COMPILE_FLAGS "-O2 -ggdb"
 )
