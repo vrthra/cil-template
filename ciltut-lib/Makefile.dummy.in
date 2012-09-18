@@ -1,11 +1,3 @@
-ifndef ARCHOS
-  ARCHOS = @ARCHOS@
-endif
-
-ifndef BUILD_DOCS
-  BUILD_DOCS = @BUILD_DOCS@
-endif
-
 ifndef BUILD_TUT11
   BUILD_TUT11 = @BUILD_TUT11@
 endif

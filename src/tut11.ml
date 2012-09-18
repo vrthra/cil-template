@@ -71,15 +71,19 @@ let initOps (it : Th.theory) (dt : Th.theory) (mt : Th.theory) : ops =
   }
 
 
-let initWhyCtxt (p : string) : wctxt = 
+let initWhyCtxt (p : string) (pv : string) : wctxt = 
 
   let config  = Wc.read_config None in
   let main    = Wc.get_main config in
   Wc.load_plugins main;
   let provers = Wc.get_provers config in
+  Wc.Mprover.iter
+    (fun k a ->
+      Em.warn "%s %s (%s)" k.Wc.prover_name k.Wc.prover_version k.Wc.prover_altern
+    ) provers;
+  let prover_spec = {Wc.prover_name =p; Wc.prover_version=pv; Wc.prover_altern=""} in
   let prover =
-    
-    try Wc.prover_by_id config p
+    try Wc.Mprover.find prover_spec provers
     with Not_found -> Em.s (Em.error "Prover %s not found." p)
   in
   let env = E.create_env (W.Whyconf.loadpath main) in
@@ -410,7 +414,7 @@ let eraseAttrs (f : file) : unit =
 
 
 let tut11 (f : file) : unit =
-  let wc = initWhyCtxt (!Ciltutoptions.prover) in
+  let wc = initWhyCtxt (!Ciltutoptions.prover) (!Ciltutoptions.prover_version) in
   iterGlobals f (onlyFunctions (processFunction wc));
 	eraseAttrs f
 

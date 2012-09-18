@@ -10,12 +10,22 @@ configure_file (
 	"${PROJECT_BINARY_DIR}/src/config.h"
 )
 
-if(BUILD_TUT15="true")
+message("BUILD_TUT11 = ${BUILD_TUT11}")
+message("BUILD_TUT15 = ${BUILD_TUT15}")
+
+if(${BUILD_TUT15} STREQUAL true)
 set(OCAML_COMPILE ocamlc)
+
+message("Building concolic callbacks")
 
 execute_process(
   COMMAND ocamlfind query ocamlyices
   OUTPUT_VARIABLE OCAML_YICES OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+  COMMAND ocamlfind query gmp
+  OUTPUT_VARIABLE OCAML_GMP OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 set(CONC_SRCS
@@ -29,7 +39,7 @@ add_custom_target(concolic_callbacks ${CONC_SRCS})
 add_custom_command(
   SOURCE  ${CONC_SRCS}
   COMMAND ${OCAML_COMPILE}
-  ARGS    -custom -output-obj -o concolic_callbacks.o -I concolic/ -I ${OCAML_YICES} -I +gmp gmp.cma nums.cma ocamlyices.cma ${CONC_SRCS}
+  ARGS    -custom -output-obj -o concolic_callbacks.o -I concolic/ -I ${OCAML_YICES} -I ${OCAML_GMP} gmp.cma nums.cma ocamlyices.cma ${CONC_SRCS}
   TARGET  concolic_callbacks
   OUTPUTS concolic_callbacks.o
   DEPENDS ${CONC_SRCS}

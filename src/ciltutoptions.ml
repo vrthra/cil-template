@@ -18,7 +18,8 @@ let merge : bool ref = ref false
 let num_tuts = 16
 let enable_tut : bool ref array = Array.init num_tuts (fun i -> ref false)
 
-let prover : string ref = ref "alt-ergo"
+let prover : string ref = ref "Alt-Ergo"
+let prover_version : string ref = ref "0.94"
 let tut13out : string ref = ref "callgraph.dot"
 
 let options_ref = ref []
@@ -75,7 +76,11 @@ let options = tut_options @ [
   
   ("--prover",
    Arg.Set_string prover,
-   "The prover that Why3 should use in Tut11 [default: alt-ergo]");
+   "The prover that Why3 should use in Tut11 [default: Alt-Ergo]");
+  ("--prover-version",
+   Arg.Set_string prover_version,
+   "The version for the prover that Why3 should use in Tut11 [default: 0.94]");
+
 
   
   ("--tut13-out",

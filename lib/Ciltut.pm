@@ -191,7 +191,7 @@ sub link_after_cil {
         print STDERR "ciltutcc: no input files\n";
         return 0;
     } else {
-        unshift @libs, @{$self->{CILTUTLIBS}}, "-ldl", "-lrt";
+        unshift @libs, @{$self->{CILTUTLIBS}};
         if ($self->{TUT15} == 1) {
             my $ocy = `ocamlfind query ocamlyices`;
             chomp($ocy);
@@ -199,6 +199,7 @@ sub link_after_cil {
                            "-lm", "-lcurses", "-L$ocy" , "-locamlyices",
                            "-lstdc++", "/usr/local/lib/libyices.a";
         }
+        push @libs, "-ldl", "-lrt";
         return $self->SUPER::link_after_cil(\@srcs, $dest, $ppargs,
                                             \@cargs, \@libs);
     }
