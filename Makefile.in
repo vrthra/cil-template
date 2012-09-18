@@ -69,9 +69,10 @@ MODULES = tututil ciltutoptions \
 
 OCAMLFIND = @OCAMLFIND@
 CILINC = $(shell $(OCAMLFIND) query cil)
+GRAPHINC = $(shell $(OCAMLFIND) query ocamlgraph)
 
-COMPILEFLAGS = -w x -I $(CILINC) -I +ocamlgraph
-LINKFLAGS    = -I $(CILINC) -I +ocamlgraph
+COMPILEFLAGS = -w x -I $(CILINC) -I $(GRAPHINC)
+LINKFLAGS    = -I $(CILINC) -I $(GRAPHINC)
 
 ifeq ($(BUILD_TUT11),true)
   COMPILEFLAGS += -I +why3
@@ -135,7 +136,7 @@ $(SUBDIRS):
 #
 
 clean:
-	rm -f $(OBJDIR)/*.* $(DEPENDDIR)/*.*
+	rm -rf $(OBJDIR)/*.* $(DEPENDDIR)/*.*
 	for i in $(SUBDIRS); do make -C $$i -f Makefile.dummy clean; done
 
 libclean:

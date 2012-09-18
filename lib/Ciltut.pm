@@ -199,7 +199,12 @@ sub link_after_cil {
                            "-lm", "-lcurses", "-L$ocy" , "-locamlyices",
                            "-lstdc++", "/usr/local/lib/libyices.a";
         }
-        push @libs, "-ldl", "-lrt";
+        if ($self->{DARWIN}) {
+          push @libs, "-ldl";
+        }
+        else {
+          push @libs, "-ldl", "-lrt";
+        }
         return $self->SUPER::link_after_cil(\@srcs, $dest, $ppargs,
                                             \@cargs, \@libs);
     }

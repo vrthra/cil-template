@@ -50,11 +50,14 @@ add_custom_command(
   DEPENDS concolic_callbacks.o
 )
 set(CONCOLIC_LIB concolic_callbacks.o)
+set(CONCOLIC_STUBS tut15.c)
 else()
 set(CONCOLIC_LIB )
+set(CONCOLIC_STUBS )
 endif()
 
-set(SHELTER_SRCS ciltut_libc.c tut4.c tut8.c tut6.c tut10.c tut15.c)
+set(SHELTER_SRCS ciltut_libc.c tut4.c tut8.c tut6.c tut10.c
+                 ${CONCOLIC_STUBS})
 
 add_library(ciltut-static ${SHELTER_SRCS} ${CONCOLIC_LIB})
 set_target_properties(ciltut-static PROPERTIES

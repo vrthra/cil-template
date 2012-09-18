@@ -1,3 +1,7 @@
+ifndef ARCHOS
+  ARCHOS = @ARCHOS@
+endif
+
 ifndef BUILD_TUT11
   BUILD_TUT11 = @BUILD_TUT11@
 endif
@@ -33,7 +37,13 @@ INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 
-INSTALL_LIBS = src/libciltut.a src/libciltut.so
+ifeq ($(ARCHOS),x86_DARWIN)
+  SOEXT=dylib
+else
+  SOEXT=so
+endif
+
+INSTALL_LIBS = src/libciltut.a src/libciltut.$(SOEXT)
 
 install: $(INSTALL_FILES)
 	$(INSTALL_DATA) $(INSTALL_LIBS) $(DESTDIR)$(pkglibdir)/lib
