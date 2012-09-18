@@ -19,7 +19,7 @@ frontend can be made to look like gcc, or whatever, and used directly in your
 build process. This tutorial creates such a frontend, and demonstrates, in
 tutorial form, some nifty things that might be done with it.
 
-2. Building and Installing:
+2a. Building and Installing (Ubuntu):
 ------------------------
 
 There are a few dependencies:
@@ -39,10 +39,11 @@ Dependencies only for the theorem proving example (tut11.ml):
 Dependencies only for the automated test generation example (tut15.ml):
 . Yices SMT solver (http://yices.csl.sri.com/)
 . ocamlyices (https://github.com/polazarus/ocamlyices)
+. pass --disable-tut15 to the configure script to disable tut15
 
 After obtaining the code, enter the directory and do the following:
 
-$ ./configure
+$ ./configure [--disable-tut11] [--disable-tut15]
 $ make
 $ sudo make install
 
@@ -66,6 +67,74 @@ $ ciltutcc --save-temps -o test1 test1.c
 
 A file called test1.cil.c will be created showing the source file created by
 the frontend before it is passed on to gcc.
+
+  [Ocamlyices installation]
+
+$ git clone git://github.com/polazarus/ocamlyices.git
+$ cd ocamlyices
+(Download yices for your platform from http://yices.csl.sri.com/download.shtml
+ into the ocamlyices directory. If the version statically linked with gmp
+ doesn't work, then try the dynamically linked version.)
+$ sudo ./install-yices.sh [the tar.gz file you dl'd]
+$ autoconf [if needed]
+$ ./configure
+$ make
+$ sudo make install
+
+  [Alt-Ergo installation]
+
+$ wget http://alt-ergo.lri.fr/http/alt-ergo-0.94.tar.gz
+$ tar zxf alt-ergo-0.94.tar.gz
+$ cd alt-ergo-0.94
+$ autoconf [if needed]
+$ ./configure
+$ make
+$ sudo make install
+
+  [Why3 Installation]
+
+$ git clone https://gforge.inria.fr/git/why3/why3.git
+$ cd why3
+$ autoconf [if needed]
+$ ./configure
+$ make
+$ make byte
+$ sudo make install
+$ sudo make install-lib
+$ why3config
+
+2b. Building and Installing (Mac OS X)
+-------------
+
+This project should build and install on 10.8 using the MacPorts OCaml install.
+I have not yet tried to get tutorials 11 and 15 running on it yet, though.
+
+(It appears that there is some problem with linking the calls from C -> OCaml
+in tut15.c, but Why3, Alt-Ergo, and Ocamlyices *should* build without
+problems---I just haven't tried it yet.)
+
+Anyway, here's what you'll need to do:
+1. install XCode and be sure to install the "Unix" or "Command line" tools.
+2. install MacPorts from http://www.macports.org
+3. Do:
+
+$ sudo port install ocaml ocaml-findlib lablgl lablgtk lablgtk2 mercurial cmake
+                    ocaml-ocamlgraph
+
+4. Install CIL:
+
+$ git clone git://cil.git.sourceforge.net/gitroot/cil/cil
+$ cd cil
+$ ./configure; make; sudo make install
+
+5. Build cil-tutorial
+
+$ hg clone https://bitbucket.org/zanderso/cil-template
+$ cd cil-template
+$ ./configure --disable-tut11 --disable-tut15
+$ make; sudo make install
+
+6. Let me know if I've missed any steps =)
 
 3. Documentation
 -------------
@@ -141,7 +210,7 @@ Or in bibtex format:
 @misc{ciltut,
   title = {A {CIL} Tutorial: Using {CIL} for Language Extensions and Program Analysis},
   author = {Zachary Anderson},
-  month = Feb,
+  month = Sep,
   year = 2012,
   note = {\url{http://www.inf.ethz.ch/~azachary/}},
 }
