@@ -1,44 +1,12 @@
 
-
-
-
-
-
-
-
-
-#define _GNU_SOURCE 
-#include <stdio.h>
-#include <dlfcn.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <pthread.h>
-
-#include <ciltut.h>
-
-
-
-
-
-
-
-
+#define _GNU_SOURCE  
+#include <stdio.h>   
+#include <dlfcn.h>   
+#include <pthread.h> 
+#include <ciltut.h>  
+ 
 int (*pthread_mutex_lock_orig)  (pthread_mutex_t *m) = NULL;
 int (*pthread_mutex_unlock_orig)(pthread_mutex_t *m) = NULL;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 int pthread_mutex_lock(pthread_mutex_t *m)
 {
@@ -61,4 +29,3 @@ int pthread_mutex_unlock(pthread_mutex_t *m)
   res = pthread_mutex_unlock_orig(m);
   return res;
 }
-

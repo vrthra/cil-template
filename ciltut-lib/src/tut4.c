@@ -1,15 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
-
 #include <stdio.h>
 
 void tut_begin_loop(const char *f, int l) {}
@@ -20,4 +9,3 @@ void tut_end_loop(const char *f, int l, int c)
   fflush(stdout);
   return;
 }
-

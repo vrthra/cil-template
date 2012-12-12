@@ -1,12 +1,21 @@
 
 
 
+
+
 open Cil 
 open Pretty
 open Tututil
 
 module L = List
 module E = Errormsg
+
+
+
+let compinfoOfLval (blv : lval) : compinfo =
+  match unrollType(typeOfLval blv) with
+  | TComp (ci, _) -> ci
+  | _ -> E.s(E.bug "Expected TComp for type of %a" d_lval blv)
 
 
 let zeroPtr (fd : fundec) (blv : lval) : stmt list =
@@ -22,11 +31,7 @@ let rec zeroType (fd : fundec) (blv : lval) : stmt list =
 
 
 and zeroComp (fd : fundec) (blv : lval) : stmt list =
-  let ci =
-    match unrollType(typeOfLval blv) with
-    | TComp (ci, _) -> ci
-    | _ -> E.s(E.bug "Expected TComp for type of %a" d_lval blv)
-  in
+  let ci = compinfoOfLval blv in
   let sl =
     ci.cfields
     |> L.map (zeroField fd blv)

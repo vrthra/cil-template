@@ -1,10 +1,9 @@
 
 
 
-open Cil
 
+open Cil
 module E = Errormsg
-module L = List 
 
 
 let tut1FixInstr (i : instr) : bool =
@@ -19,7 +18,7 @@ let tut1FixInstr (i : instr) : bool =
 let rec tut1FixStmt (s : stmt) : unit =
   match s.skind with
   | Instr il ->
-    s.skind <- Instr(L.filter tut1FixInstr il)
+    s.skind <- Instr(List.filter tut1FixInstr il)
   | If(_,tb,fb,_) ->
     tut1FixBlock tb;
     tut1FixBlock fb
@@ -40,13 +39,13 @@ let rec tut1FixStmt (s : stmt) : unit =
 
   | _ -> ()
 
-and tut1FixBlock (b : block) : unit = L.iter tut1FixStmt b.bstmts
+and tut1FixBlock (b : block) : unit = List.iter tut1FixStmt b.bstmts
 
 let tut1FixFunction (fd : fundec) : unit = tut1FixBlock fd.sbody
 
 
 let tut1 (f : file) : unit =
-  L.iter (fun g ->
+  List.iter (fun g ->
     match g with
     | GFun (fd, loc) when fd.svar.vname = "target" ->
       tut1FixFunction fd

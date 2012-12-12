@@ -1,24 +1,5 @@
 
-
-
-
-
-
-
-
-
-
-
 #include <ciltut.h>
-
-
-
-
-
-
-
-
-
 
 int (instrument string_compare)(char *a, char *b)
 {
@@ -34,16 +15,6 @@ int (instrument string_compare)(char *a, char *b)
 	return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
 uint64_t (autotest f)(int input a, int input b)
 {
 	if ((a * b) - (a + b) == 14862436) {
@@ -51,14 +22,6 @@ uint64_t (autotest f)(int input a, int input b)
 	}
 	else return 0;
 }
-
-
-
-
-
-
-
-
 
 uint64_t (autotest g)(char *inputnt s)
 {
@@ -75,4 +38,3 @@ int main ()
 
 	return res;
 }
-

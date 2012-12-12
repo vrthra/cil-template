@@ -1,9 +1,4 @@
 
-
-
-
-
-
 #include <stdio.h>
 
 int deleted = 37;
@@ -23,5 +18,3 @@ int main()
   printf("r = %d\n", r);
   return 0;
 }
-
-

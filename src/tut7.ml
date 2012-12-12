@@ -1,6 +1,8 @@
 
 
 
+
+
 open Cil 
 open Tututil
 
@@ -9,23 +11,24 @@ module S = String
 module L = List
 
 
+
 type color =  Red | Blue | Green
+
 
 let redStr   = "red"
 let blueStr  = "blue"
 let greenStr = "green"
 
-let color_strings = [
-  redStr;
-  blueStr;
-  greenStr;
-]
+
+let color_strings = [redStr; blueStr; greenStr;]
+
 
 let string_of_color (c : color) : string =
   match c with
   | Red   -> redStr
   | Blue  -> blueStr
   | Green -> greenStr
+
 
 let color_of_string (cs : string) : color =
   match S.lowercase cs with
@@ -49,8 +52,6 @@ let colors_of_type (t : typ) : color list =
   |> L.filter (isTypeColor t)
   |> L.map color_of_string
 
-let attr_of_color (c : color) : attribute = Attr(string_of_color c,[])
-
 
 type typecheck_result =
   | TypesOkay
@@ -64,15 +65,14 @@ let rec colorTypesCompat (t1 : typ) (t2 :typ) : typecheck_result =
   if cl1 <> cl2 then ColorsMismatch(t1, t2) else begin
     match t1, t2 with
     | TVoid _, TVoid _ -> TypesOkay
-    | TInt(ik1, _), TInt(ik2, _) when ik1 = ik2 -> TypesOkay
-    | TFloat(fk1, _), TFloat(fk2, _) when fk1 = fk2 -> TypesOkay
     | TPtr(t1, _), TPtr(t2, _)
     | TArray(t1,_,_), TArray(t2,_,_) -> colorTypesCompat t1 t2
-    
-    | TFun _, TPtr(t2, _) -> colorTypesCompat t1 t2
-    | TPtr(t1, _), TFun _ -> colorTypesCompat t1 t2
     | TFun _, TFun _ -> TypesOkay 
     
+    | TInt(ik1, _), TInt(ik2, _) when ik1 = ik2 -> TypesOkay
+    | TFloat(fk1, _), TFloat(fk2, _) when fk1 = fk2 -> TypesOkay
+    | TFun _, TPtr(t2, _) -> colorTypesCompat t1 t2
+    | TPtr(t1, _), TFun _ -> colorTypesCompat t1 t2
     | TNamed(ti1, _), _ -> colorTypesCompat ti1.ttype t2
     | _, TNamed(ti2, _) -> colorTypesCompat t1 ti2.ttype
     | TComp(ci1, _), TComp(ci2, _) when ci1.cname = ci2.cname -> TypesOkay
@@ -86,13 +86,11 @@ let rec colorTypesCompat (t1 : typ) (t2 :typ) : typecheck_result =
 
 let warning_for_tcres (tcr : typecheck_result) : unit =
   match tcr with
-  | TypesOkay -> ()
   | TypesMismatch(t1, t2) ->
-    E.warn "%a: type mismatch: %a <> %a"
-      d_loc (!currentLoc) d_type t1 d_type t2
+    E.warn "%a: type mismatch: %a <> %a" d_loc (!currentLoc) d_type t1 d_type t2
   | ColorsMismatch(t1, t2) ->
-    E.warn "%a: color mismatch: %a <> %a"
-      d_loc (!currentLoc) d_type t1 d_type t2
+    E.warn "%a: color mismatch: %a <> %a" d_loc (!currentLoc) d_type t1 d_type t2
+  | TypesOkay -> ()
 
 
 class colorCheckVisitor = object(self)
@@ -116,6 +114,7 @@ class colorCheckVisitor = object(self)
     | _ -> DoChildren
 end
 
+
 let checkColorTypes (fd : fundec) (loc : location) : unit =
   let vis = new colorCheckVisitor in
   ignore(visitCilFunction vis fd)
@@ -131,10 +130,10 @@ class colorEraserVisitor = object(self)
 
 end
 
+
 let eraseColors (f : file) : unit =
   let vis = new colorEraserVisitor in
   visitCilFile vis f
-
 
 
 let tut7 (f : file) : unit =

@@ -1,12 +1,15 @@
 
 
 
+
+
 open Cil
 open Pretty
 open Tututil
 
 module E = Errormsg
 module L = List
+
 
 
 let cacheReportStr = "cache_report"
@@ -22,20 +25,19 @@ let isCacheReportStmt (s : stmt) : block option =
   | _ -> None
 
 
+
+
 type functions = {
   mutable cache_begin : varinfo;
   mutable cache_end   : varinfo;
 }
 
-
 let dummyVar = makeVarinfo false "_tut_foo" voidType
-
 
 let cachefuns = {
   cache_begin = dummyVar;
   cache_end   = dummyVar;
 }
-
 
 let cache_begin_str = "tut_cache_begin"
 let cache_end_str   = "tut_cache_end"
@@ -60,7 +62,6 @@ let initCacheFunctions (f : file) : unit =
   in
   cachefuns.cache_begin <- focf cache_begin_str cb_type;
   cachefuns.cache_end   <- focf cache_end_str   ce_type
-
 
 
 

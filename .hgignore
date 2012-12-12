@@ -4,6 +4,7 @@ Makefile
 config.status
 config.log
 
+*~
 *.exe
 *.d
 *.o

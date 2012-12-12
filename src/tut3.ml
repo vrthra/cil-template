@@ -1,12 +1,14 @@
 
 
 
+
 open Cil 
 open Pretty
 open Tututil
 
 module L  = List     
 module E  = Errormsg 
+
 module IH = Inthash  
 module DF = Dataflow 
 
@@ -18,7 +20,6 @@ type oekind = Top | Odd | Even | Bottom
 
 
 type varmap = int * (varinfo * oekind)
-
 
 let id_of_vm   (vm : varmap) : int     = fst vm
 let vi_of_vm   (vm : varmap) : varinfo = vm |> snd |> fst
@@ -107,10 +108,6 @@ let kind_of_int64 (i : Int64.t) : oekind =
   let firstbit = Int64.logand i Int64.one in
   if firstbit = Int64.one then Odd else Even
 
-let kind_of_int (i : int) : oekind =
-  let firstbit = i land 1 in
-  if firstbit = 1 then Odd else Even
-
 
 let rec oekind_of_exp (vml : varmap list) (e : exp) : oekind =
   match e with
@@ -122,6 +119,7 @@ let rec oekind_of_exp (vml : varmap list) (e : exp) : oekind =
   | BinOp(bo, e1, e2, t) -> oekind_of_binop vml bo e1 e2
   | CastE(t, e) -> oekind_of_exp vml e
   | _ -> Top
+
 
 and oekind_of_unop (vml : varmap list) (u : unop) (e : exp) : oekind =
   match u with
@@ -141,6 +139,7 @@ and oekind_of_binop (vml : varmap list) (b : binop) (e1 : exp) (e2 : exp) : oeki
     | Odd, Even -> Odd
     | _, _ -> Top
   end
+  
   | MinusA -> begin
     match k1, k2 with
     | Even, Even -> Even
@@ -155,6 +154,8 @@ and oekind_of_binop (vml : varmap list) (b : binop) (e1 : exp) (e2 : exp) : oeki
     | Odd, Odd -> Odd
     | _, _ -> Top
   end
+  
+  
   | _ -> Top
 
 
@@ -167,9 +168,7 @@ let varmap_list_kill (vml : varmap list) : varmap list =
 
 let varmap_list_handle_inst (i : instr) (vml : varmap list) : varmap list =
   match i with
-  | Set((Var vi, NoOffset), e, loc)
-      when not(vi.vglob) && (isIntegralType vi.vtype) ->
-    
+  | Set((Var vi, NoOffset), e, loc) when not(vi.vglob) && (isIntegralType vi.vtype) ->
     let k = oekind_of_exp vml e in
     varmap_list_replace vml (vi.vid,(vi,k)) 
   | Set((Mem _, _), _, _)
@@ -178,6 +177,7 @@ let varmap_list_handle_inst (i : instr) (vml : varmap list) : varmap list =
 
 
 module OddEvenDF = struct
+
   let name = "OddEven"
   let debug = debug
   type t = varmap list
@@ -185,16 +185,23 @@ module OddEvenDF = struct
   let stmtStartData = IH.create 64
   let pretty = varmap_list_pretty
   let computeFirstPredecessor stm vml = vml
+
+
   let combinePredecessors (s : stmt) ~(old : t) (ll : t) =
     if varmap_list_equal old ll then None else
     Some(varmap_list_combine old ll)
+
   let doInstr (i : instr) (ll : t) =
     let action = varmap_list_handle_inst i in
     DF.Post action
+
+
   let doStmt stm ll = DF.SDefault
   let doGuard c ll = DF.GDefault
   let filterStmt stm = true
+
 end
+
 
 module OddEven = DF.ForwardsDataFlow(OddEvenDF)
 
@@ -206,19 +213,13 @@ let collectVars (fd : fundec) : varmap list =
 
 
 let computeOddEven (fd : fundec) : unit =
-  try
-    Cfg.clearCFGinfo fd;
-    ignore(Cfg.cfgFun fd);
-    let first_stmt = L.hd fd.sbody.bstmts in
-    let vml = collectVars fd in
-    IH.clear OddEvenDF.stmtStartData;
-    IH.add OddEvenDF.stmtStartData first_stmt.sid vml;
-    OddEven.compute [first_stmt]
-  with
-  | Failure "hd" ->
-    if !debug then E.log "Function with no statements: %s\n" fd.svar.vname
-  | Not_found ->
-    E.error "No data for first statement? %s" fd.svar.vname
+  Cfg.clearCFGinfo fd;
+  ignore(Cfg.cfgFun fd);
+  let first_stmt = L.hd fd.sbody.bstmts in
+  let vml = collectVars fd in
+  IH.clear OddEvenDF.stmtStartData;
+  IH.add OddEvenDF.stmtStartData first_stmt.sid vml;
+  OddEven.compute [first_stmt]
 
 
 let getOddEvens (sid : int) : varmap list option =
@@ -232,46 +233,40 @@ let instrOddEvens (il : instr list) (vml : varmap list) : varmap list list =
     | [] -> (varmap_list_handle_inst i vml) :: hil
     | vml':: rst as l -> (varmap_list_handle_inst i vml') :: l
   in
-  il
-  |> L.fold_left proc_one [vml]
-  |> L.tl
-  |> L.rev
+  il |> L.fold_left proc_one [vml]
+     |> L.tl
+     |> L.rev
 
 
 class vmlVisitorClass = object(self)
   inherit nopCilVisitor
 
-  val mutable sid = -1
-  val mutable vml_dat_lst = []
-  val mutable cur_vml_dat = None
+  val mutable sid           = -1
+  val mutable state_list    = []
+  val mutable current_state = None
 
   method vstmt stm =
     sid <- stm.sid;
-    match getOddEvens sid with
-    | None ->
-      cur_vml_dat <- None;
-      DoChildren
+    begin match getOddEvens sid with
+    | None -> current_state <- None
     | Some vml -> begin
       match stm.skind with
       | Instr il ->
-        cur_vml_dat <- None;
-        vml_dat_lst <- instrOddEvens il vml;
-        DoChildren
-      | _ ->
-        cur_vml_dat <- None;
-        DoChildren
-    end
+        current_state <- None;
+        state_list <- instrOddEvens il vml
+      | _ -> current_state <- None
+    end end;
+    DoChildren
 
   method vinst i =
-    try
-      let data = L.hd vml_dat_lst in
-      cur_vml_dat <- Some(data);
-      vml_dat_lst <- L.tl vml_dat_lst;
-      DoChildren
+    try let data = L.hd state_list in
+        current_state <- Some(data);
+        state_list <- L.tl state_list;
+        DoChildren
     with Failure "hd" -> DoChildren
 
   method get_cur_vml () =
-    match cur_vml_dat with
+    match current_state with
     | None -> getOddEvens sid
     | Some vml -> Some vml
 

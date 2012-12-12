@@ -1,11 +1,4 @@
 
-
-
-
-
-
-
-
 #include <pthread.h>
 
 int counter = 0;
@@ -18,5 +11,3 @@ int main()
   pthread_mutex_unlock(&mtx);
   return 0;
 }
-
-

@@ -1,15 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
-
 #include <ciltut.h>
 
 struct bar {
@@ -17,15 +6,8 @@ struct bar {
   int ExactRGB(r,g,b) c;
 };
 
-void foo(int LowerRGB(r,g,b) c, int r, int g, int b)
-{
-  return;
-}
-
-void bar(int UpperRGB(r,g,b) c, int r, int g, int b)
-{
-  return;
-}
+void foo(int LowerRGB(r,g,b) c, int r, int g, int b) {return;}
+void bar(int UpperRGB(r,g,b) c, int r, int g, int b) {return;}
 
 int main()
 {
@@ -41,5 +23,3 @@ int main()
 
   return 0;
 }
-
-

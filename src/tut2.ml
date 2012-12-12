@@ -1,11 +1,13 @@
 
 
 
-open Cil
-open Pretty
-open Tututil 
 
+
+open Cil
 module E = Errormsg
+
+
+open Tututil 
 
 
 class assignRmVisitor (vname : string) = object(self)
@@ -13,8 +15,7 @@ class assignRmVisitor (vname : string) = object(self)
 
   method vinst (i : instr) = 
     match i with
-    | Set((Var vi, NoOffset), _, loc)
-        when vi.vname = vname && vi.vglob ->
+    | Set((Var vi, NoOffset), _, loc) when vi.vname = vname && vi.vglob ->
       E.log "%a: Assignment deleted: %a\n" d_loc loc d_instr i;
       ChangeTo [] 
     | _ -> SkipChildren 
@@ -22,8 +23,7 @@ class assignRmVisitor (vname : string) = object(self)
 end
 
 
-let processFunction ((tf,tv) : string * string)
-                    (fd : fundec) (loc : location) : unit =
+let processFunction ((tf, tv) : string * string) (fd : fundec) (loc : location) : unit =
   if fd.svar.vname <> tf then () else begin
     let vis = new assignRmVisitor tv in
     ignore(visitCilFunction vis fd)
@@ -31,9 +31,6 @@ let processFunction ((tf,tv) : string * string)
 
 
 let tut2 (funvar : string * string) (f : file) : unit =
-  funvar
-  |> processFunction
-  |> onlyFunctions
-  |> iterGlobals f
+  funvar |> processFunction |> onlyFunctions |> iterGlobals f
 
 

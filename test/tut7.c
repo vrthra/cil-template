@@ -1,11 +1,4 @@
 
-
-
-
-
-
-
-
 #include <ciltut.h>
 
 int blue b;
@@ -16,4 +9,3 @@ int main()
   b = g;
   return 0;
 }
-

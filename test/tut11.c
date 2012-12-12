@@ -1,21 +1,5 @@
-
-
-
-
-
-
-
-
+ 
 #include <ciltut.h> 
-
-
-
-
-
-
-
-
-
 
 void (pre(n > 0)
       post(forall(j,implies(j>=0 && j < n,*(a+j)==4)))
@@ -33,13 +17,6 @@ void (pre(n > 0)
   return;
 }
 
-
-
-
-
-
-
-
 int main()
 {
   int arr[5];
@@ -48,5 +25,3 @@ int main()
 
   return 0;
 }
-
-

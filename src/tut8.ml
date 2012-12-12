@@ -1,6 +1,8 @@
 
 
 
+
+
 open Cil 
 open Pretty
 open Tututil
@@ -8,6 +10,7 @@ open Tututil
 module E = Errormsg
 module L = List
 module S = String
+
 
 
 module SM = Map.Make(struct
@@ -26,15 +29,12 @@ type color =
 
 type colors = color list
 
+
 let exactRGBStr = "ExactRGB"
 let lowerRGBStr = "LowerRGB"
 let upperRGBStr = "UpperRGB"
 
-let color_strings = [
-  exactRGBStr;
-  lowerRGBStr;
-  upperRGBStr;
-]
+let color_strings = [exactRGBStr; lowerRGBStr; upperRGBStr;]
 
 
 let rgb_of_color (c : color) : rgb =
@@ -43,13 +43,14 @@ let rgb_of_color (c : color) : rgb =
   | LowerRGB(r,g,b)
   | UpperRGB(r,g,b) -> r, g, b
 
+
 let string_of_rgb (t : rgb) : string =
   let t =
-    t
-    |> triplemap (d_exp ())
-    |> triplemap (sprint ~width:80)
+    t |> triplemap (d_exp ())
+      |> triplemap (sprint ~width:80)
   in
   "("^(fst3 t)^", "^(snd3 t)^", "^(thd3 t)^")"
+
 
 let string_of_color (c : color) : string =
   let k =
@@ -59,6 +60,7 @@ let string_of_color (c : color) : string =
     | UpperRGB _ -> upperRGBStr
   in
   k^(c |> rgb_of_color |> string_of_rgb)
+
 
 let string_of_colors (c : colors) : string =
   c
@@ -91,8 +93,9 @@ let context_for_locals (c : ctxt) (fd : fundec) : ctxt =
 let context_for_call (c : ctxt) (fe : exp) (args : exp list) : ctxt =
   match typeOf fe with
   | TFun(_, Some stal, _, _) ->
-    L.fold_left2 ctxt_add_exp c
-      (L.map fst3 stal) (list_take (L.length stal) args)
+    let formals = L.map fst3 stal in
+    let actuals = list_take (L.length stal) args in
+    L.fold_left2 ctxt_add_exp c formals actuals
   | _ -> c
 
 
@@ -100,11 +103,8 @@ let context_for_struct (c : ctxt) (loc : location) (lv : lval) : ctxt =
   let blv, off = removeOffsetLval lv in
   match off with
   | NoOffset | Index _ -> c
-  | Field(fi, NoOffset) ->
-    L.fold_left (ctxt_add_field blv) c fi.fcomp.cfields
-  | _ ->
-    E.s(E.bug "%a: Expected field w/o offset: %a"
-      d_loc loc d_lval lv)
+  | Field(fi, NoOffset) -> L.fold_left (ctxt_add_field blv) c fi.fcomp.cfields
+  | _ -> E.s(E.bug "%a: Expected field w/o offset: %a" d_loc loc d_lval lv)
 
 
 let rec exp_of_ap (c : ctxt) (loc : location) (ap : attrparam) : exp =
@@ -208,7 +208,8 @@ let colorqual_of_type (k : string) (c : ctxt) (loc : location) (t : typ)
       d_loc loc d_type t;
     []
   | _ -> []
-    
+
+
 let exactRGB_of_type = colorqual_of_type exactRGBStr
 let lowerRGB_of_type = colorqual_of_type lowerRGBStr
 let upperRGB_of_type = colorqual_of_type upperRGBStr
@@ -228,20 +229,19 @@ let colors_of_type (c : ctxt) (loc : location) (t : typ) : colors =
     []
 
 
+
+
 type color_checks = {
   mutable color_eq : varinfo;
   mutable color_le : varinfo;
 }
 
-
 let dummyVar = makeVarinfo false "_tut_foo" voidType
-
 
 let color_funcs = {
   color_eq = dummyVar;
   color_le = dummyVar;
 }
-
 
 let color_eq_str = "tut_color_eq"
 let color_le_str = "tut_color_le"
@@ -251,12 +251,7 @@ let color_function_names = [
   color_le_str;
 ]
 
-let isColorFun (n : string) : bool =
-  L.mem n color_function_names
-
-
 let initColorFunctions (f : file) : unit = 
-
   let focf : string -> typ -> varinfo = findOrCreateFunc f in
   let eqtyp =
     TFun(voidType, Some["r1",intType,[]; "g1",intType,[]; "b1",intType,[];
@@ -267,11 +262,11 @@ let initColorFunctions (f : file) : unit =
   color_funcs.color_eq <- focf color_eq_str eqtyp;
   color_funcs.color_le <- focf color_le_str eqtyp
 
-
 let mkColorInst (vi : varinfo) (loc : location) (c1 : rgb) (c2 : rgb) : instr =
   let f, l = mkString loc.file, integer loc.line in
   Call(None, v2e vi,
       [fst3 c1; snd3 c1; thd3 c1; fst3 c2; snd3 c2; thd3 c2; f; l], loc)
+
 
 let mkColorEqInst () = mkColorInst color_funcs.color_eq
 let mkColorLeInst () = mkColorInst color_funcs.color_le
@@ -287,18 +282,15 @@ let color_includes (loc : location)
   | LowerRGB c1, LowerRGB c2 -> [mkColorLeInst () loc c2 c1]
   | ExactRGB c1, UpperRGB c2
   | UpperRGB c1, UpperRGB c2 -> [mkColorLeInst () loc c1 c2]
-  | _ ->
-    E.error "%a: color inclusion test will always fail"
-      d_loc (!currentLoc);
-    []
+  | _ -> E.error "%a: color inclusion test will always fail" d_loc (!currentLoc);
+         []
 
 
 let colors_includes (loc : location)
                     (is_this : colors) (in_this : colors)
                     : instr list
   =
-  if (is_this = [] && in_this <> []) ||
-     (is_this <> [] && in_this = []) then
+  if (is_this = [] && in_this <> []) || (is_this <> [] && in_this = []) then
     
     E.error "%a: color mismatch" d_loc loc;
   L.concat (
@@ -327,6 +319,7 @@ class colorCheckVisitor (c : ctxt) = object(self)
       let ec  = colors_of_exp  c loc e  in
       self#queueInstr (colors_includes loc ec lvc);
       DoChildren
+    
     | Call(rlvo, fe, args, loc) ->
       let rt, stal = function_elements fe in
       let cc = context_for_call c fe args in
@@ -344,9 +337,11 @@ class colorCheckVisitor (c : ctxt) = object(self)
         | None -> ()
       end;
       DoChildren
+    
     | _ -> DoChildren
 
 end
+
 
 let checkColorTypes (c : ctxt) (fd : fundec) (loc : location) : unit =
   let c = context_for_locals c fd in
@@ -368,14 +363,15 @@ let eraseColors (f : file) : unit =
   let vis = new colorEraserVisitor in
   visitCilFile vis f
 
-
 let tut8_init (f : file) : unit =
   initColorFunctions f
+
+
 
 let tut8 (f : file) : unit =
   tut8_init f;
   let c = context_for_globals f in
-  iterGlobals f (onlyFunctions (checkColorTypes c));
+  c |> checkColorTypes |> onlyFunctions |> iterGlobals f;
   eraseColors f
 
 

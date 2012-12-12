@@ -1,16 +1,4 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 #define _GNU_SOURCE   
 #include <stdint.h>   
 #include <pthread.h>  
@@ -19,20 +7,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ciltut.h>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 struct cache_stack_entry {
   uint64_t start_miss;
@@ -46,18 +20,6 @@ struct cache_stack {
   int t;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 pthread_key_t CS_key;
 static void init_CS()
 {
@@ -68,24 +30,13 @@ static void init_CS()
 CONSTRUCTOR static void init_CS_key()
 {
   pthread_key_create(&CS_key, &free);
-	init_CS();
+  init_CS();
 }
 
 static struct cache_stack *get_CS()
 {
   return (struct cache_stack *)pthread_getspecific(CS_key);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 int (*pthread_create_orig)(pthread_t *__restrict,
                            __const pthread_attr_t *__restrict,
@@ -98,19 +49,6 @@ CONSTRUCTOR static void init_cache_stack()
 {
   pthread_create_orig = checked_dlsym(RTLD_NEXT, "pthread_create");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 struct pthread_closure {
   void *(*fn)(void *);
@@ -134,12 +72,6 @@ static void *tfunc_wrapper(void *arg)
   return res;
 }
 
-
-
-
-
-
-
 int pthread_create(pthread_t *__restrict thread,
                    __const pthread_attr_t *__restrict attr,
                    void * (*start_routine)(void *),
@@ -161,18 +93,6 @@ int pthread_create(pthread_t *__restrict thread,
   return res;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 void tut_cache_begin(char const *f, int l)
 {
   struct timespec t;
@@ -185,14 +105,6 @@ void tut_cache_begin(char const *f, int l)
   
   return;
 }
-
-
-
-
-
-
-
-
 
 void tut_cache_end(char const *f, int l)
 {
@@ -220,5 +132,3 @@ void tut_cache_end(char const *f, int l)
   cs->t--;
   return;
 }
-
-

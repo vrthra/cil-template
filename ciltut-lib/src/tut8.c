@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,7 +10,6 @@ void tut_color_le(int r1, int g1, int b1,
             f, l, r1, g1, b1, r2, g2, b2);
     exit (-1);
   }
-
   return;
 }
 
@@ -25,8 +22,5 @@ void tut_color_eq(int r1, int g1, int b1,
             f, l, r1, g1, b1, r2, g2, b2);
     exit (-1);
   }
-
   return;
 }
-
-

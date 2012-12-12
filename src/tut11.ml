@@ -6,11 +6,13 @@ IFDEF BUILD_TUT11 THEN
 
 
 
+
 open Cil
 open Tututil
 
 module Em = Errormsg
 module L = List
+
 
 module W = Why3 
 module T = W.Term 
@@ -31,9 +33,12 @@ type ops = {
   idiv_op   : T.lsymbol; 
   imod_op   : T.lsymbol; 
   lt_op     : T.lsymbol; 
+  
   gt_op     : T.lsymbol;
   lte_op    : T.lsymbol;
   gte_op    : T.lsymbol;
+  
+  
   get_op    : T.lsymbol; 
   set_op    : T.lsymbol;
 }
@@ -71,7 +76,7 @@ let initOps (it : Th.theory) (dt : Th.theory) (mt : Th.theory) : ops =
   }
 
 
-let initWhyCtxt (p : string) (pv : string) : wctxt = 
+let initWhyCtxt (p : string) (pv : string) : wctxt =
 
   let config  = Wc.read_config None in
   let main    = Wc.get_main config in
@@ -104,6 +109,7 @@ let initWhyCtxt (p : string) (pv : string) : wctxt =
    ops = initOps int_theory div_theory arr_theory;
    memory = T.create_vsymbol (W.Ident.id_fresh "M") int_arr_t;
    vars = SM.empty;}
+
 
 
 
@@ -300,12 +306,15 @@ let term_of_inst (wc : wctxt) (i : instr) : T.term -> T.term =
     let te = term_of_exp wc e in
     let vs = SM.find vi.vname wc.vars in
     T.t_let_close vs te
+    
   | Set((Mem me, NoOffset), e, loc) ->
     let te = term_of_exp wc e in
     let tme = term_of_exp wc me in
     let ms = wc.memory in
     let ume = T.t_app_infer wc.ops.set_op [T.t_var ms; tme; te] in
     T.t_let_close ms ume
+    
+  
   | _ -> Em.s (Em.error "term_of_inst: We can only handle assignment")
 
 

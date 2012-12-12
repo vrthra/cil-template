@@ -1,35 +1,12 @@
 
-
-
-
-
-
-
 #include <unistd.h>
 #include <getopt.h>
-
 #include <ciltut.h> 
-
-
-
-
-
-
 
 argument(int, boolarg) {
   .short_form = "b",
   .help_text  = "A boolean argument",
 };
-
-
-
-
-
-
-
-
-
-
 
 argument(int, intarg, mandatory) {
   .short_form = "i",
@@ -44,4 +21,3 @@ int main(int argc, char *argv[])
   printf("%d %d\n", boolarg, intarg);
   return 0;
 }
-

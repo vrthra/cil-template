@@ -1,6 +1,8 @@
 
 
 
+
+
 open Cil
 open Pretty
 open Tututil
@@ -9,10 +11,12 @@ module E  = Errormsg
 module L  = List
 module S  = String
 module A  = Array
-module Q  = Queue
 
-module T = Tut7 
-type colors = T.color list 
+
+
+module Q  = Queue
+module T = Tut7
+type colors = T.color list
 
 
 let nodeStr = "Node"
@@ -24,6 +28,7 @@ let node_of_type (t : typ) : int =
   | [(Attr(_, [AInt id]))] -> id
   | [] -> 0
   | _ -> E.s (E.bug "%a: Malformed node id on %a" d_loc (!currentLoc) d_type t)
+
 
 class typeNodeMarker (node_count : int ref) = object(self)
   inherit nopCilVisitor
@@ -38,6 +43,7 @@ class typeNodeMarker (node_count : int ref) = object(self)
     in
     ChangeDoChildrenPost(t, action)
 end
+
 
 let addNodeMarks (f : file) : int =
   let cntr = ref 1 in
@@ -67,6 +73,7 @@ type node = {
   mutable outgoing  : int list;
 }
 
+
 let newNode (id : int) : node =
   {ncolors = []; incoming = []; outgoing = []}
 
@@ -83,6 +90,7 @@ let graphAddEdge (g : graph) (from_node : int) (to_node : int) : unit =
   if not(L.mem from_node g.(to_node).incoming) then
     g.(to_node).incoming <- from_node :: g.(to_node).incoming
 
+
 let rec typesAddEdge (g : graph) (from_type : typ) (to_type : typ) : unit =
   let from_id = node_of_type from_type in
   let to_id   = node_of_type to_type   in
@@ -93,6 +101,7 @@ let addEdgesForCallArgs (g : graph) (fe : exp) (aes  : exp list) : unit =
   let fts = fe |> function_elements |> snd |> L.map snd3 in
   let ats = aes |> list_take (L.length fts) |> L.map typeOf in
   L.iter2 (typesAddEdge g) ats fts
+
 
 let addEdgesForCallRet (g : graph) (fe : exp) (rlvo : lval option) : unit =
   match rlvo with
@@ -110,6 +119,8 @@ class graphBuilder (g : graph) (fd : fundec) = object(self)
     | Set(lv, e, loc) ->
       typesAddEdge g (typeOf e) (typeOfLval lv);
       DoChildren
+  
+  
     | Call(rlvo, fe, aes, loc) ->
       addEdgesForCallArgs g fe aes;
       addEdgesForCallRet  g fe rlvo;
@@ -130,8 +141,9 @@ class graphBuilder (g : graph) (fd : fundec) = object(self)
       typesAddEdge g (typeOf e) rt;
       DoChildren
     | _ -> DoChildren
-
+  
 end
+
 
 let functionBuildGraph (g : graph) (fd : fundec) (loc : location) : unit =
   let vis = new graphBuilder g fd in
@@ -157,9 +169,11 @@ class nodeColorFinder (g : graph) = object(self)
 
 end
 
+
 let findColoredNodes (f : file) (g : graph) : unit =
   let vis = new nodeColorFinder g in
   visitCilFile vis f
+
 
 let colors_equal (c1 : colors) (c2 : colors) : bool =
   L.for_all (fun c -> L.mem c c2) c1 &&
@@ -171,6 +185,7 @@ let enqueueNodes (g : graph) : int Q.t =
   A.iteri (fun i _ -> Q.add i q) g;
   q
 
+
 let processNode (g : graph) (id : int) : bool =
   let c' =
     L.fold_left (fun c id' -> list_union c g.(id').ncolors)
@@ -181,6 +196,7 @@ let processNode (g : graph) (id : int) : bool =
     true
   end else false
 
+
 let processQueue (g : graph) (q : int Q.t) : unit =
   while not(Q.is_empty q) do
     let id = Q.pop q in
@@ -188,6 +204,9 @@ let processQueue (g : graph) (q : int Q.t) : unit =
       L.iter (fun id' -> Q.add id' q) g.(id).outgoing
     end
   done
+
+
+let attr_of_color (c : T.color) : attribute = Attr(T.string_of_color c,[])
 
 
 class colorAdder (g : graph) = object(self)
@@ -198,10 +217,11 @@ class colorAdder (g : graph) = object(self)
     let ic = (t |> node_of_type |> A.get g).ncolors in
     if oc <> [] && not(colors_equal ic oc) then DoChildren
     else if list_equal (=) ic oc then DoChildren else
-    let nattr = L.map T.attr_of_color ic in
+    let nattr = L.map attr_of_color ic in
     ChangeTo (typeAddAttributes nattr t)
 
 end
+
 
 let addInferredColors (f : file) (g : graph) : unit =
   let vis = new colorAdder g in

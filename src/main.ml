@@ -72,7 +72,6 @@ let main () =
     | _ -> Mergecil.merge files "stdout"
   in
 
-
   processOneFile one
 ;;  
 
@@ -81,8 +80,7 @@ begin
   try 
     main () 
   with
-  | F.CabsOnly ->  ()
+  | F.CabsOnly -> ()
   | E.Error -> ()
-  
 end;
 exit (if !E.hadErrors then 1 else 0)

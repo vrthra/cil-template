@@ -1,22 +1,23 @@
 
 
 
+
 open Cil 
 open Pretty
 open Tututil
 module S = String
 module L = List
+
+
+
 module GA = GrowArray
-
-
-module A = Cabs
+module A  = Cabs
 module CH = Cabshelper
 
 
 let prepareCommentArray (cca : comment array) (fname : string) : comment array =
-  cca
-  |> array_filter (fun (cl,_,_) -> fname = cl.A.filename)
-  |> array_sort_result comment_compare
+  cca |> array_filter (fun (cl,_,_) -> fname = cl.A.filename)
+      |> array_sort_result comment_compare
 
 
 let commentsAdjacent (cca : comment array) (l : location)
@@ -69,17 +70,15 @@ class commentVisitorClass (cca : comment array) = object(self)
   val mutable last = locUnknown
 
   method vinst (i : instr) =
-    last <- i
-      |> get_instrLoc
-      |> commentsBetween cca last
-      |> printComments cca (get_instrLoc i);
+    last <- i |> get_instrLoc
+              |> commentsBetween cca last
+              |> printComments cca (get_instrLoc i);
     DoChildren
 
   method vstmt (s : stmt) =
-    last <- s.skind
-      |> get_stmtLoc
-      |> commentsBetween cca last
-      |> printComments cca (get_stmtLoc s.skind);
+    last <- s.skind |> get_stmtLoc
+                    |> commentsBetween cca last
+                    |> printComments cca (get_stmtLoc s.skind);
     DoChildren
 
 end

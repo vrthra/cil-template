@@ -56,12 +56,16 @@ let assertStr    = "ciltut_assert"
 let mandatoryStr = "mandatory"
 let attr_strings = [argStr; assertStr; mandatoryStr;]
 
+
 let hasArgAttr       : attributes -> bool = hasAttribute argStr
 let hasAssertAttr    : attributes -> bool = hasAttribute assertStr
 let hasMandatoryAttr : attributes -> bool = hasAttribute mandatoryStr
 
+
 let isArgType       (t : typ) : bool = t |> typeAttrs |> hasArgAttr
 let isMandatoryType (t : typ) : bool = t |> typeAttrs |> hasMandatoryAttr
+
+
 let getAssertAttr (t : typ) : attrparam =
   match filterAttributes assertStr (typeAttrs t) with
   | [Attr(_, [ap])] -> ap
@@ -106,7 +110,7 @@ let handle_field (c : T.ctxt) (loc : location) (a : argument)
     | "requires"   -> a.argReq    <- req_of_exp c loc e
     | "format"     -> a.argFmt    <- string_of_exp e
     | "has_opt"    -> a.argOption <- e = one
-    | _       -> E.s(E.bug "malformed arg struct")
+    | _            -> E.s(E.bug "malformed arg struct")
   end
   | _ -> E.s(E.bug "Unexpected initializer in argument_of_global")
 
@@ -162,12 +166,10 @@ let create_long_options (f : file) (main : fundec) (al : argument list)
   let foo    = field_of_option o ot in
   let size   = integer((L.length al + 1) * ((bitsSizeOf ot)/8)) in
   let mcall  = Call(Some(var o), v2e malloc, [size], locUnknown) in
-  let inits =
-    al
-    |> A.of_list
-    |> A.mapi (initialize_options foo)
-    |> A.to_list
-    |> L.concat
+  let inits  = al |> A.of_list
+                  |> A.mapi (initialize_options foo)
+                  |> A.to_list
+                  |> L.concat
   in
   o, mcall, inits
 
@@ -176,10 +178,9 @@ let create_short_options (al : argument list) : exp =
   let short_arg_of_arg (a : argument) : string =
     a.argShort^(if a.argOption then ":" else "")
   in
-  al
-  |> L.map short_arg_of_arg
-  |> S.concat ""
-  |> mkString
+  al |> L.map short_arg_of_arg
+     |> S.concat ""
+     |> mkString
 
 
 let getMainArgs (main : fundec) : varinfo * varinfo =
@@ -302,11 +303,10 @@ let eraseAttrs (f : file) : unit =
 
 
 let tut14 (f : file) : unit =
-  f
-  |> gatherArguments
-  |> processFunction f
-  |> onlyFunctions
-  |> iterGlobals f;
+  f |> gatherArguments
+    |> processFunction f
+    |> onlyFunctions
+    |> iterGlobals f;
   eraseAttrs f
 
 
