@@ -1,13 +1,12 @@
 This is a simple tutorial about how to use the CIL compiler frontend to do
 static and dynamic program analysis.
 
-Author: Zach Anderson (zachary.anderson@inf.ethz.ch)
+Author: Zach Anderson (zanderso@acm.org)
 
 1. Intro
 2. Building and Installing
-3. Documentation
-4. Files
-5. Citation
+3. Files
+4. Citation
 
 1. Intro:
 ------
@@ -136,32 +135,7 @@ $ make; sudo make install
 
 6. Let me know if I've missed any steps =)
 
-3. Documentation
--------------
-(This is to remind me how to build the docs in my private repo, and so they
-don't apply to the code under this tree. The documentation of which this section
-speaks will shortly be available at http://www.inf.ethz.ch/~azachary.)
-
-
-Dependencies for the documentation:
-. LaTeX
-. ocamlweb
-  - Ubuntu package: ocamlweb
-. highlight
-	- Ubuntu packages: highlight highlight-common
-	- Version 2.16 can be obtained for Mac OSX at:
-	  http://www.hmug.org/pub/MacOS_X/BSD/Applications/Text/highlight
-. Again, please let me know if I've forgotten anything
-
-Assuming you have installed these, doing:
-
-$ make
-
-will build docs/ciltut.pdf along with everything else.
-
-Pass --disable-docs to the configure script to disable document building.
-
-4. Files:
+3. Files:
 ---------
 
 Makefile.in - Edit the "MODULES =" line to add additional OCaml modules. Other
@@ -191,7 +165,7 @@ test/tut*.c - Test programs for the various tutorial modules.
 LICENSE - All the code in this project is licensed under a standard 3-clause
 BSD license.
 
-5. Citation:
+4. Citation:
 ------------
 
 If you use cil-template as a starting point for your project, please make the
