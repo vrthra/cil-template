@@ -1,7 +1,0 @@
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
-
-#define libciltut_VERSION_MAJOR @libciltut_VERSION_MAJOR@
-#define libciltut_VERSION_MINOR @libciltut_VERSION_MINOR@
-
-#endif /* __CONFIG_H__ */

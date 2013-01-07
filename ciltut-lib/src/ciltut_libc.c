@@ -73,14 +73,11 @@ static uint64_t read_perf_counter(int *perffds, int counter)
   size_t res;
 
   res = read(perffds[counter], &val, sizeof(uint64_t));
+  if (res == -1) {
+    perror("read");
+  }
 
   return val;
-}
-
-static void forget_perf_counter(int counter)
-{
-  perf_counter_fds[counter] = -1;
-  return;
 }
 
 static void close_perf_counter(int counter)

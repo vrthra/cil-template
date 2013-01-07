@@ -23,10 +23,10 @@ sub new {
     # directory layouts.
     my $bin;
     my $lib;
-    if (-x "$::ciltuthome/obj/$::archos/ciltut.asm.exe") {
+    if (-x "$::ciltuthome/obj/$::archos/ciltutcc.exe_opt") {
         $bin = "$::ciltuthome/obj/$::archos";
         $lib = "$::ciltuthome/obj/$::archos";
-    } elsif (-x "$::ciltuthome/bin/ciltut.asm.exe") {
+    } elsif (-x "$::ciltuthome/bin/ciltutcc.exe_opt") {
         $bin = "$::ciltuthome/bin";
         $lib = "$::ciltuthome/lib";
     } else {
@@ -35,8 +35,8 @@ sub new {
     }
 
     # Select the most recent executable
-    my $mtime_asm = int((stat("$bin/ciltut.asm.exe"))[9]);
-    my $mtime_byte = int((stat("$bin/ciltut.byte.exe"))[9]);
+    my $mtime_asm = int((stat("$bin/ciltutcc.exe_opt"))[9]);
+    my $mtime_byte = int((stat("$bin/ciltutcc.exe"))[9]);
     my $use_debug = 
             grep(/--bytecode/, @args) ||
             grep(/--ocamldebug/, @args) ||
@@ -46,7 +46,7 @@ sub new {
     } 
 
     # Save choice in global vars for printHelp (can be called from Cilly::new)
-    $Ciltut::compiler = "$bin/ciltut" . ($use_debug ? ".byte.exe" : ".asm.exe");
+    $Ciltut::compiler = "$bin/ciltutcc" . ($use_debug ? ".exe" : ".exe_opt");
 
     my $self = Ciltut->Cilly::new(@args);
 
@@ -64,6 +64,7 @@ sub new {
     $self->{SEPARATE} = 1;
 
     $self->{TUT15} = 0;
+    $self->{CONCOLICLIB} = "$lib/libconcolic_callbacks.$self->{LIBEXT}";
 
     bless $self, $class;
 }
@@ -191,13 +192,26 @@ sub link_after_cil {
         print STDERR "ciltutcc: no input files\n";
         return 0;
     } else {
-        unshift @libs, @{$self->{CILTUTLIBS}};
         if ($self->{TUT15} == 1) {
             my $ocy = `ocamlfind query ocamlyices`;
             chomp($ocy);
-            push @libs, "-L/usr/lib/ocaml", "-lunix", "-lnums", "-lcamlrun",
-                           "-lm", "-lcurses", "-L$ocy" , "-locamlyices",
-                           "-lstdc++", "/usr/local/lib/libyices.a";
+            push @libs, "-L$::ciltuthome/lib", "-L/usr/lib/ocaml", "-L$ocy",
+                        "-Wl,-rpath=$::ciltuthome/lib",
+                        "-Wl,--start-group",
+                        "-lcamlrun",
+                        "-lciltut",
+                        "-ltut15callbacks",
+                        "-lunix",
+                        "-lnums",
+                        "-Wl,--end-group",
+                        "-lcurses",
+                        "-locamlyices",
+                        "-lstdc++",
+                        "-lm",
+                        "/usr/local/lib/libyices.a";
+        }
+        else {
+            push @libs, @{$self->{CILTUTLIBS}};
         }
         if ($self->{DARWIN}) {
           push @libs, "-ldl";

@@ -4,6 +4,8 @@ Makefile
 config.status
 config.log
 
+build
+
 *~
 *.exe
 *.d
@@ -17,6 +19,7 @@ config.log
 *.cma
 *.cmxa
 *.dylib
+*.pyc
 
 bu*.*
 *.aux
@@ -32,17 +35,14 @@ bu*.*
 autom4te.cache/*
 ciltut-lib/Makefile.dummy
 ciltut-lib/src/config.h
+ciltut-lib/install_manifest.txt
 ciltut-lib/src/*.tex
 test/*.tex
 cil_tutorial.*
 
-ciltut-lib/CMakeCache.txt
-ciltut-lib/CMakeFiles/*
-ciltut-lib/Makefile
-ciltut-lib/cmake_install.cmake
-ciltut-lib/src/CMakeFiles/*
-ciltut-lib/src/Makefile
-ciltut-lib/src/cmake_install.cmake
-
 tools/delcamlcomms
+tools/pygCext/pygCext.egg-info
+tools/pygCext/build
+tools/pygCext/dist
 
+docs/ciltut.mw

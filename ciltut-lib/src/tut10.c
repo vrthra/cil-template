@@ -95,7 +95,6 @@ int pthread_create(pthread_t *__restrict thread,
 
 void tut_cache_begin(char const *f, int l)
 {
-  struct timespec t;
   struct cache_stack *cs = get_CS();
   
   cs->s[cs->t].start_miss = perf_get_cache_miss();
@@ -108,7 +107,6 @@ void tut_cache_begin(char const *f, int l)
 
 void tut_cache_end(char const *f, int l)
 {
-  struct timespec t;
   uint64_t final_miss, final_refs, final_time;
   uint64_t net_miss,   net_refs,   net_time;
   double miss_rate;

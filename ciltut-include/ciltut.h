@@ -31,16 +31,23 @@
 void *checked_dlsym(void *handle, const char *sym);
 pid_t gettid();
 
+void perf_init(pid_t pid);
 uint64_t perf_get_cache_refs();
 uint64_t perf_get_cache_miss();
+void perf_deinit();
 uint64_t tut_get_time();
+
+
+void toggle_lock_tracking();
 
 #include <getopt.h>
 size_t s;
 struct option o;
 
+#ifdef __CILTUT__
 #pragma cilnoremove("getoptdummy")
-static int getoptdummy()
+#endif
+static inline int getoptdummy()
 {
   int i;
   optarg = NULL;
@@ -89,7 +96,9 @@ void register_input(char *name, uint64_t addr, int bits);
 void register_arr_input(char *name, uint64_t start, int sz, int cnt);
 void register_nt_input(char *name, char *start);
 
+#ifdef __CILTUT__
 #pragma cilnoremove("autotest_finished")
+#endif
 extern int autotest_finished;
 void gen_new_input();
 
