@@ -14,7 +14,7 @@ Author: Zach Anderson (zanderso@acm.org)
 CIL is a frontend for C compilers. It takes C code as input, which can then be
 analyzed or instrumented, and then spits out C code, which can be passed to
 your favorite C compiler. This process can be automated such that your CIL-based
-frontend can be made to look like gcc, or whatever, and used directly in your
+front-end can be made to look like gcc, or whatever, and used directly in your
 build process. This tutorial creates such a frontend, and demonstrates, in
 tutorial form, some nifty things that might be done with it.
 
@@ -33,20 +33,23 @@ There are a few dependencies:
 Dependencies only for the theorem proving example (tut11.ml):
 . why3
 . theorem provers (e.g. alt-ergo)
-. pass --disable-tut11 to the configure script to disable tut11
+. pass -DBUILD_TUT11=true to cmake to include this example
 
 Dependencies only for the automated test generation example (tut15.ml):
 . Yices SMT solver (http://yices.csl.sri.com/)
 . ocamlyices (https://github.com/polazarus/ocamlyices)
-. pass --disable-tut15 to the configure script to disable tut15
+. pass -DBUILD_TUT15 to cmake to include this example
 
-After obtaining the code, enter the directory and do the following:
+Then, to obtain and build:
 
-$ ./configure [--disable-tut11] [--disable-tut15]
+$ hg clone https://bitbucket.org/zanderso/cil-template
+$ mkdir build
+$ cd build
+$ cmake [-DBUILD_TUT11=true] [-DBUILD_TUT15=true] ..
 $ make
 $ sudo make install
 
-Then, enter the /test directory and build the program like so:
+Then, enter the test directory and build a program like so:
 
 $ ciltutcc -o test1 test1.c
 $ ./test1
@@ -128,19 +131,17 @@ $ ./configure; make; sudo make install
 
 5. Build cil-tutorial
 
-$ hg clone https://bitbucket.org/zanderso/cil-template
-$ cd cil-template
-$ ./configure --disable-tut11 --disable-tut15
-$ make; sudo make install
+As above
+
 
 6. Let me know if I've missed any steps =)
 
 3. Files:
 ---------
 
-Makefile.in - Edit the "MODULES =" line to add additional OCaml modules. Other
-parts of the Makefile can probably remain unchanged unless you need to do
-something weird.
+CMakeLists.txt - Add additional filenames to CILTUT_SRC on line 48 to add
+additional OCaml modules. Other parts of the Makefile can probably remain
+unchanged unless you need to do something weird.
 
 src/main.ml - Reads in a source file, calls into the various tutorial modules,
 spits out the result. Hopefully it is obvious where to add code to call into
@@ -153,8 +154,10 @@ src/tut*.ml - Tutorial modules explaining how to use CIL.
 ciltut-include/ciltut.h - Various function and macro definitions needed for
 building ciltut-lib and the things in test/.
 
-ciltut-lib/ - The runtime library, build with CMake. The files in src/tut*.c
+ciltut-lib/ - The runtime library. The files in src/tut*.c
 go along with the corresponding .ml files. ciltut_libc.c has utility functions.
+To add new code to the runtime, add file names to the CMakeLists.txt file under
+the src/ directory in the obvious place.
 
 lib/Ciltut.pm - A perl script that sits in front of the actual compiler
 frontend. It is used for massaging the command line a bit. For example, it makes
@@ -177,14 +180,14 @@ Zachary Anderson. A CIL Tutorial: Using CIL for Language Extensions and Program
 At the time this README file was written, this evaluates to:
 
 Zachary Anderson. A CIL Tutorial: Using CIL for Language Extensions and Program
-  Analysis, February 2012. http://www.inf.ethz.ch/~azachary.
+  Analysis, January 2013. http://www.inf.ethz.ch/~azachary.
 
 Or in bibtex format:
 
 @misc{ciltut,
   title = {A {CIL} Tutorial: Using {CIL} for Language Extensions and Program Analysis},
   author = {Zachary Anderson},
-  month = Sep,
-  year = 2012,
+  month = Jan,
+  year = 2013,
   note = {\url{http://www.inf.ethz.ch/~azachary/}},
 }
