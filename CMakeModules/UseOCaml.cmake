@@ -278,10 +278,10 @@ macro( ocaml_get_dependencies target srcfile dependencies )
     if( is_impl AND EXISTS "${srcpath}/${srcname_we}.mli" )
         set( has_intf TRUE )
     endif()
-    #message( STATUS " * Dependencies for ${srcfile}" )
-    #message( STATUS "   ${srcfile} is_impl: ${is_impl}" )
-    #message( STATUS "   ${srcfile} has_intf: ${has_intf}" )
-    #message( STATUS "   ${srcfile} dep_arg: ${dep_arg}" )
+    message( STATUS " * Dependencies for ${srcfile}" )
+    message( STATUS "   ${srcfile} is_impl: ${is_impl}" )
+    message( STATUS "   ${srcfile} has_intf: ${has_intf}" )
+    message( STATUS "   ${srcfile} dep_arg: ${dep_arg}" )
 
     # get dependencies {{{2
     execute_process(
@@ -300,7 +300,7 @@ macro( ocaml_get_dependencies target srcfile dependencies )
         RESULT_VARIABLE res
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
-    #message( STATUS "   ${srcfile} dep_mods: ${dep_mods}" )
+    message( STATUS "   ${srcfile} dep_mods: ${dep_mods}" )
 
     # for each dependency, look for the real file {{{2
     foreach( dep_mod ${dep_mods} )
@@ -311,18 +311,27 @@ macro( ocaml_get_dependencies target srcfile dependencies )
         # comparison with source filename
         execute_process(
             COMMAND echo ${dep_mod}
-            COMMAND sed -e "s/\\([A-Z]\\)\\(.*\\)/\\l\\1\\2/"
+            # sed on mac does not support \l
+            #COMMAND sed -e "s/\\([A-Z]\\)\\(.*\\)/\\l\\1\\2/"
+            COMMAND tr "[:upper:]" "[:lower:]"
             OUTPUT_VARIABLE dep_fn
             OUTPUT_STRIP_TRAILING_WHITESPACE
             )
+        message( STATUS " ${srcfile} dep_fn: ${dep_fn}")
 
         # look among the current target's sources {{{3
         # iterate over the reported sources rather then the list of real
         # sources
         foreach( tgtsrc ${OCAML_${target}_SOURCES} )
             get_filename_component( tgtsrcname ${tgtsrc} NAME_WE ) # drop extension in case
-            if( dep_fn STREQUAL ${tgtsrcname} )
-                #message( STATUS "   Found ${tgtsrcname} among my own sources." )
+            execute_process(
+                COMMAND echo ${tgtsrcname}
+                COMMAND tr "[:upper:]" "[:lower:]"
+                OUTPUT_VARIABLE ltgtsrcname
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+            if( dep_fn STREQUAL ${ltgtsrcname} )
+                message( STATUS "   Found ${tgtsrcname} among my own sources." )
                 set( location "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/ocaml.${target}.dir" )
                 if( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${tgtsrcname}.mli" )
                     set( dep_has_intf TRUE )
@@ -430,7 +439,7 @@ macro( ocaml_add_impl_obj target srcfile )
 
     # calculate dependencies
     ocaml_get_dependencies( ${target} ${srcfile} depends )
-    #message( STATUS "   ${srcfile} depends: ${depends}" )
+    message( STATUS "   ${srcfile} depends: ${depends}" )
 
     add_custom_command( OUTPUT ${output}
         COMMAND ${CMAKE_OCAML_COMPILER}
@@ -501,7 +510,7 @@ macro( ocaml_add_intf_obj target srcfile )
 
     # calculate dependencies
     ocaml_get_dependencies( ${target} ${srcfile} depends )
-    #message( STATUS "   ${srcfile} depends: ${depends}" )
+    message( STATUS "   ${srcfile} depends: ${depends}" )
 
     add_custom_command( OUTPUT ${output}
         COMMAND ${CMAKE_OCAML_COMPILER}
