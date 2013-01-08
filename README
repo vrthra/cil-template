@@ -6,7 +6,8 @@ Author: Zach Anderson (zanderso@acm.org)
 1. Intro
 2. Building and Installing
 3. Files
-4. Citation
+4. Bugs and Feedback
+5. Citation
 
 1. Intro:
 ------
@@ -168,7 +169,13 @@ test/tut*.c - Test programs for the various tutorial modules.
 LICENSE - All the code in this project is licensed under a standard 3-clause
 BSD license.
 
-4. Citation:
+4. Bugs, and Feedback:
+--------------
+
+Please use the issue tracker on bitbucket to report bugs, make suggestions,
+give feedback, etc..
+
+5. Citation:
 ------------
 
 If you use cil-template as a starting point for your project, please make the
