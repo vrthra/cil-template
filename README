@@ -29,6 +29,9 @@ There are a few dependencies:
   - Ubuntu packages: cmake cmake-data
 . CIL
   - Build and install from http://cil.sf.net
+  - There appears to be a problem with version 1.7.1, if the build fails
+    and you are using this version, try 1.6.0 or something later than
+    1.7.1.
 . Please let me know if I've forgotten anything
 
 Dependencies only for the theorem proving example (tut11.ml):
