@@ -32,6 +32,8 @@ There are a few dependencies:
   - There appears to be a problem with version 1.7.1, if the build fails
     and you are using this version, try 1.6.0 or something later than
     1.7.1.
+. ocamlgraph
+  - Ubuntu package: libocamlgraph-ocaml-dev
 . Please let me know if I've forgotten anything
 
 Dependencies only for the theorem proving example (tut11.ml):
@@ -42,7 +44,7 @@ Dependencies only for the theorem proving example (tut11.ml):
 Dependencies only for the automated test generation example (tut15.ml):
 . Yices SMT solver (http://yices.csl.sri.com/)
 . ocamlyices (https://github.com/polazarus/ocamlyices)
-. pass -DBUILD_TUT15 to cmake to include this example
+. pass -DBUILD_TUT15=true to cmake to include this example
 
 Then, to obtain and build:
 
@@ -137,8 +139,8 @@ $ ./configure; make; sudo make install
 
 As above
 
-
 6. Let me know if I've missed any steps =)
+
 
 3. Files:
 ---------
@@ -172,11 +174,13 @@ test/tut*.c - Test programs for the various tutorial modules.
 LICENSE - All the code in this project is licensed under a standard 3-clause
 BSD license.
 
+
 4. Bugs, and Feedback:
 --------------
 
 Please use the issue tracker on bitbucket to report bugs, make suggestions,
 give feedback, etc..
+
 
 5. Citation:
 ------------
