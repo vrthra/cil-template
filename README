@@ -29,9 +29,9 @@ There are a few dependencies:
   - Ubuntu packages: cmake cmake-data
 . CIL
   - Build and install from http://cil.sf.net
-  - There appears to be a problem with version 1.7.1, if the build fails
-    and you are using this version, try 1.6.0 or something later than
-    1.7.1.
+  - There is a problem building against versions 1.7.{1,2}. 
+    If you encounter errors while linking, try the tip of
+    the CIL git repo, or an earlier version.
 . ocamlgraph
   - Ubuntu package: libocamlgraph-ocaml-dev
 . Please let me know if I've forgotten anything
