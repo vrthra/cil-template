@@ -7,12 +7,12 @@ $::version_major = 1;
 $::version_minor = 0;
 $::version_sub = 0;
 
-use Cilly;
+use App::Cilly;
 
 # NOTE: If perl chokes, complaining about 'our', or
 # "Array found where operator expected", it's because
 # you need perl version 5.6.0 or later.
-our @ISA = qw(Cilly);
+our @ISA = qw(App::Cilly);
 
 sub new {
     my ($proto, @args) = @_;
@@ -48,7 +48,7 @@ sub new {
     # Save choice in global vars for printHelp (can be called from Cilly::new)
     $Ciltut::compiler = "$bin/ciltutcc" . ($use_debug ? ".exe" : ".exe_opt");
 
-    my $self = Ciltut->Cilly::new(@args);
+    my $self = Ciltut->App::Cilly::new(@args);
 
     # New variables for Ciltut
     $self->{COMPILER} = $Ciltut::compiler;

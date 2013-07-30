@@ -11,7 +11,7 @@ use lib "$FindBin::RealBin/../lib";
 use lib "$FindBin::RealBin/../cil/bin";
 use lib "$FindBin::RealBin/../cil/lib";
 
-use CilConfig;
+use App::Cilly::CilConfig;
 use Ciltut;
 
 $::ciltuthome = "$FindBin::RealBin/..";

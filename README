@@ -57,8 +57,11 @@ $ sudo make install
 
 Then, enter the test directory and build a program like so:
 
-$ ciltutcc -o test1 test1.c
-$ ./test1
+$ ciltutcc -o tut1 --enable-tut1 test/tut1.c
+test/tut1.c:9: Deleted assignment: #line 9 "test/tut1.c"
+deleted = 0;
+$ ./tut1
+r = 37
 
 The generated ciltutcc takes all of the usual gcc arguments, in addition to the
 following:
