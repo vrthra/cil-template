@@ -3,7 +3,7 @@ project(cil-template)
 
 include(CheckLibraryExists)
 
-if(NOT DEFINED CMAKE_ISNTALL_PREFIX)
+if(NOT DEFINED CMAKE_INSTALL_PREFIX)
 set(CMAKE_INSTALL_PREFIX "/usr/local/lib/ciltut/")
 endif()
 
@@ -77,7 +77,7 @@ if(BUILD_TUT15 STREQUAL "true")
   set(PPARGS "${PPARGS} -DBUILD_TUT15")
 endif()
 
-message("isntall prefix = " ${CMAKE_INSTALL_PREFIX})
+message("install prefix = " ${CMAKE_INSTALL_PREFIX})
 message("PPARGS = " ${PPARGS})
 
 foreach(PACK ${CILTUT_PACKS})
