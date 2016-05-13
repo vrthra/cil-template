@@ -14,7 +14,8 @@ endif()
 # ocamlfind
 find_program( CMAKE_OCAML_OCAMLFIND
     NAMES ocamlfind ocamlfind_opt
-    HINTS ${OCAML_ROOT_DIR}
+    HINTS ~/.opam/system/bin/
+    ${OCAML_ROOT_DIR}
     )
 
 if( CMAKE_OCAML_OCAMLFIND )

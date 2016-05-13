@@ -67,7 +67,7 @@ let main () =
   let files = List.map parseOneFile !Ciloptions.fileNames in
   let one =
     match files with
-	  | [] -> E.s (E.error "No file names provided")
+    | [] -> E.s (E.error "No file names provided")
     | [o] -> o
     | _ -> Mergecil.merge files "stdout"
   in

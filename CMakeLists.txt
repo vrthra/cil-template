@@ -65,7 +65,7 @@ set(CILTUT_SRC src/tututil
                src/tut15
                src/main)
 
-set(CILTUT_PACKS unix str ocamlgraph findlib cil cil.callgraph)
+set(CILTUT_PACKS unix str ocamlgraph findlib cil)
 
 if(BUILD_TUT11 STREQUAL "true")
   set(PPARGS "${PPARGS} -DBUILD_TUT11")
